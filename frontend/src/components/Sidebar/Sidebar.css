@@ -1,0 +1,14 @@
+.sidebar-container{
+    position: fixed;
+    background-color: rgb(255, 255, 255);
+    font-size: 1.3rem;
+    padding: 2rem;
+    box-shadow: 1px 1px 1px 0px #ebe0e0;
+    height: 100%;
+
+}
+.sidebar-container ul,li{
+    list-style-type: none;
+    padding: 1rem;
+}
+
