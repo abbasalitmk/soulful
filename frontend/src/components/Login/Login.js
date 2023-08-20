@@ -5,11 +5,12 @@ import { FcGoogle } from 'react-icons/fc'
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux'
 import { setToken, setUser } from '../../features/auth/authSlice'
 import jwt_decode from "jwt-decode";
+import toast from 'react-hot-toast'
+
 
 
 
@@ -17,11 +18,19 @@ import jwt_decode from "jwt-decode";
 
 
 const Login = () => {
+
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
     // const token = useSelector((state) => (state.auth.token))
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/posts')
+        }
+    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -34,12 +43,19 @@ const Login = () => {
             const user = jwt_decode(token.access)
 
             if (response.status === 200 && token) {
-                dispatch(setToken(token))
-                dispatch(setUser(user))
-                localStorage.setItem('access', JSON.stringify(token))
-                localStorage.setItem('user', JSON.stringify(user))
+                if (!user.is_verified) {
+                    toast.error('user is not verified')
 
-                navigate('/posts')
+                    navigate('/email-verification')
+                }
+                else {
+                    dispatch(setToken(token))
+                    dispatch(setUser(user))
+                    localStorage.setItem('access', JSON.stringify(token))
+                    localStorage.setItem('user', JSON.stringify(user))
+                    navigate('/posts')
+                }
+
             }
 
 
@@ -51,35 +67,6 @@ const Login = () => {
         }
     }
 
-    const updateToken = async () => {
-        try {
-            const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', {
-            })
-            console.log(response.data);
-            // const token = response.data
-            // const user = jwt_decode(token.access)
-
-            // if (response.status === 200 && token) {
-            //     dispatch(setToken(token))
-            //     dispatch(setUser(user))
-            //     localStorage.setItem('access', token)
-            //     localStorage.setItem('user', JSON.stringify(user))
-            //     navigate('/posts')
-            // }
-
-        }
-        catch (error) {
-            console.log(error);
-            // if (error.response) {
-            //     toast.error('Login failed. Please check your credentials.', { position: toast.POSITION.TOP_CENTER });
-            // }
-        }
-    }
-
-    setInterval(() => {
-        updateToken()
-        console.log('working');
-    }, 5000);
 
 
     return (

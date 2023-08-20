@@ -1,11 +1,10 @@
 .posts-container{
-    background-color: rgb(247 247 247)
 }
 
 .post{
     background-color: rgb(255, 255, 255);
     margin: 1rem;
-    box-shadow: 0px 0 5px 0px #b9a1a1;
+    box-shadow: 0px 0 3px 0px #b9a1a1;
 }
 
 .new-post-form{
@@ -20,6 +19,19 @@
 
 .post-image{
     margin-top:1rem;
-    width: 100%;
-   
+    max-width: 40vw;
+    max-height: 70vh;
+}
+.image-preview{
+    max-width: 20vw;
+}
+.new-status-form{
+    margin-top: 2rem;
+    background-color: rgb(239 239 239);
+    box-shadow: 0px 0 3px 0px #b9a1a1;
+    padding: 10px;
+}
+.post-description{
+    font-size: 1.1rem;
+    margin-top: .5rem;
 }

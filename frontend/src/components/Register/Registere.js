@@ -5,10 +5,11 @@ import { FcGoogle } from 'react-icons/fc'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useState } from 'react'
-import { toast } from 'react-toastify'
-import { useDispatch } from 'react-redux'
+
+import { useDispatch, useSelector } from 'react-redux'
 import { setToken } from '../../features/auth/authSlice'
-import 'react-toastify/dist/ReactToastify.css';
+import toast from 'react-hot-toast'
+import { InfinitySpin } from 'react-loader-spinner'
 
 
 
@@ -19,6 +20,8 @@ const Register = () => {
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
     const [confirm_password, setConfirmPassword] = useState(null)
+    const token = useSelector((state) => state.auth.token)
+    const [loading, setLoading] = useState(false)
 
     const dispatch = useDispatch()
 
@@ -32,17 +35,24 @@ const Register = () => {
         e.preventDefault()
 
         try {
+            setLoading(true);
             const response = await axios.post('http://127.0.0.1:8000/user/register/', formData)
             console.log(response.data);
+            setLoading(true)
             if (response.status === 201) {
+
+                console.log(response);
                 toast.success(response.data.message,)
-                dispatch(setToken(response.data.access))
-                navigate('/posts')
+
+                // dispatch(setToken(response.data.access))
+                navigate('/email-verification')
             }
 
         }
         catch (error) {
             const errorMessage = error.response.data
+            console.log(errorMessage);
+
             if (errorMessage) {
 
                 if (errorMessage.email) {
@@ -54,10 +64,18 @@ const Register = () => {
                 else if (errorMessage.name) {
                     toast.error('Name :' + errorMessage.name[0])
                 }
+                else if (errorMessage.non_field_errors) {
+                    toast.error('Error :' + errorMessage.non_field_errors[0])
+                }
+                else {
+                    toast.error('Something went wrong')
+                }
 
             }
         }
-
+        finally {
+            setLoading(false)
+        }
 
     }
 
@@ -71,9 +89,23 @@ const Register = () => {
                 <div className="col-md-6 col-sm-12 col-xs-12 mx-auto">
                     <div className="login-container ">
                         <form onSubmit={handleSubmit}>
+
                             <div className="mb-4">
-                                <h3 className='text-center'>Join us today <FaHandSpock color='#ffce19' /> </h3>
-                                <h5 className='text-center'>It's Free !</h5>
+                                {
+                                    loading ? <div className='text-center'>
+                                        <InfinitySpin
+                                            width='200'
+                                            color="#4fa94d"
+                                        />
+                                    </div> :
+
+                                        (
+                                            <div>
+                                                <h3 className='text-center'>Join us today <FaHandSpock color='#ffce19' /> </h3>
+                                                <h5 className='text-center'>It's Free !</h5>
+                                            </div>
+                                        )
+                                }
                             </div>
                             <div className="mb-3">
                                 <div className="d-grid gap-2">
@@ -106,6 +138,7 @@ const Register = () => {
                         </form>
                     </div>
                 </div>
+
             </div >
         </div >
     )

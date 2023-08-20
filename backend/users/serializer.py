@@ -21,6 +21,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['is_staff'] = user.is_staff
         token['is_admin'] = user.is_admin
         token['name'] = user.name
+        token['is_verified'] = user.is_verified
         # ...
 
         return token
