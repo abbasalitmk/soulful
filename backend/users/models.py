@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.db.models import JSONField
 
 
 class MyUserManager(BaseUserManager):
@@ -41,6 +42,7 @@ class MyUser(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
+    profile_completed = models.BooleanField(default=False)
 
     objects = MyUserManager()
 
@@ -57,3 +59,44 @@ class MyUser(AbstractBaseUser):
 
     def __str__(self):
         return self.email
+
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name='user_profile')
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=50, null=True, blank=True)
+    dob = models.DateField()
+    gender = models.CharField(max_length=50)
+    place = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.user.name
+
+
+class UserPreferences (models.Model):
+    user = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name='user_preference')
+    gender = models.CharField(max_length=50)
+    interests = JSONField()
+
+    def __str__(self):
+        return self.user.name
+
+
+class Images(models.Model):
+    user = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='profile')
+
+
+class Followers(models.Model):
+    user = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name='followed_users')
+    followed_user = models.ForeignKey(
+        MyUser, on_delete=models.CASCADE, related_name='user')
+
+    class Meta:
+        unique_together = ('user', 'followed_user')

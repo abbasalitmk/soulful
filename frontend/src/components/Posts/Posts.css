@@ -1,9 +1,7 @@
-.posts-container{
-}
 
 .post{
-    background-color: rgb(255, 255, 255);
-    margin: 1rem;
+    background-color: #f9f9f9;
+    margin-bottom: .8rem;
     box-shadow: 0px 0 3px 0px #b9a1a1;
 }
 
@@ -21,6 +19,8 @@
     margin-top:1rem;
     max-width: 40vw;
     max-height: 70vh;
+   
+    
 }
 .image-preview{
     max-width: 20vw;
@@ -34,4 +34,8 @@
 .post-description{
     font-size: 1.1rem;
     margin-top: .5rem;
+}
+
+.post-options{
+    text-align: right;
 }

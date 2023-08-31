@@ -1,0 +1,64 @@
+
+.image-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    transition: transform 0.3s;
+        border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+
+}
+.image-container:hover{
+    transform: scale(1.07);
+        
+}
+
+.follow-button {
+    position: absolute;
+    width: 2.2em;
+    height: 2.2em;
+    top: 50%;
+    left: 50%;
+    
+    transform: translate(-50%, 250%);
+    background-color: #ff4136;
+    color: white;
+    
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.3s, background-color 0.3s, transform 0.3s;
+}
+
+.follow-button:hover {
+    background-color: #2980b9;
+    transform: translate(-50%, 250%) rotate(360deg) scale(1.3);
+}
+
+
+.person-name{
+    position: absolute;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    color: #ffff;
+    font-size: 1.2em;
+    white-space: nowrap;
+}
+
+.person-location {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 230%);
+    color: #ffff;
+    font-size: 1em;
+    white-space: nowrap;
+}
+.image-container img{
+    width: 100%;
+    height: 40vh;
+    object-fit: cover;
+}

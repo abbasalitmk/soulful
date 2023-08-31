@@ -2,6 +2,7 @@ import './Posts.css'
 import { FcCamera } from 'react-icons/fc'
 import { Link } from 'react-router-dom'
 import { AiFillLike, AiOutlineComment, AiOutlineShareAlt } from 'react-icons/ai'
+import { BiEdit, BiTrash, BiMenu } from 'react-icons/bi'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
@@ -23,7 +24,6 @@ const Posts = () => {
     const [image, setImage] = useState(null)
     const [imagePreview, setImagePreview] = useState(null)
     const [liked, setLiked] = useState([])
-
 
 
 
@@ -132,14 +132,33 @@ const Posts = () => {
         setTitle('')
     }
 
+    const deletePost = async (id) => {
+        try {
+            setLoading(true)
+            const response = await axios.post(`http://127.0.0.1:8000/posts/delete/${id}`)
+            if (response.status === 200) {
+                toast.success('Post deleted')
+                fetchData()
+            }
+        }
+        catch (error) {
+            toast.error('Post not found !')
+        }
+        finally {
+            setLoading(false)
+        }
+
+    }
+
 
 
     const iconStyle = {
-        color: '#000'
+        color: '#000',
+        textDecoration: 'none'
     }
 
     return (
-        <div className="col-md-6 offset-md-3 posts-container">
+        <div className="col-md-6 offset-md-3">
             <div className='new-post'>
                 <p className='text-center'>{loading ?
                     (<div>
@@ -155,8 +174,8 @@ const Posts = () => {
                 </p>
                 <form onSubmit={postSubmitHandler} encType="multipart/form-data">
                     <div className='new-status-form'>
-                        <div class="mb-2 mt-3 ">
-                            <textarea onChange={(e) => setTitle(e.target.value)} value={title} placeholder="What's on your mind?" class="new-post-form form-control" id="" rows="2">
+                        <div className="mb-2 mt-3 ">
+                            <textarea onChange={(e) => setTitle(e.target.value)} value={title} placeholder="What's on your mind?" className="new-post-form form-control" id="" rows="2">
                             </textarea>
                             {imagePreview &&
                                 <div className='d-flex justify-content-center align-items-center'>
@@ -166,14 +185,14 @@ const Posts = () => {
 
                         </div>
 
-                        <div class="input-group mb-3 d-flex justify-content-center">
+                        <div className="input-group mb-3 d-flex justify-content-center">
 
-                            <input class="form-control" type="file" accept="image/" id="file" name='image' onChange={onImageSelected} style={{ display: "none" }} loading="lazy" />
+                            <input className="form-control" type="file" accept="image/" id="file" name='image' onChange={onImageSelected} style={{ display: "none" }} loading="lazy" />
                             <label for="file"><li className='me-2 btn btn-dark'><FcCamera size={'2em'} /> Photo / Video</li></label>
                             {imagePreview &&
-                                <button onClick={imagePreviewCancel} button class="btn btn-danger rounded me-2" type="button" id="button-addon2">Cancel</button>
+                                <button onClick={imagePreviewCancel} button className="btn btn-danger rounded me-2" type="button" id="button-addon2">Cancel</button>
                             }
-                            <button class="btn btn-success rounded" type="submit" id="button-addon2">Post</button>
+                            <button className="btn btn-success rounded" type="submit" id="button-addon2">Post</button>
                         </div>
                     </div>
                 </form>
@@ -183,29 +202,43 @@ const Posts = () => {
             {
                 data.map((item, index) => {
                     return (
-                        <div className="row mx-auto ">
+                        <div className="row mx-auto text-center">
 
                             <div className="col post">
-                                <div className="mt-2 text-center">
+                                <div className="mt-2">
                                     <div className='post-options'>
 
+
+                                        <div className="dropdown">
+                                            <button className="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <BiMenu size={'1.6em'} />
+                                            </button>
+                                            <ul className="dropdown-menu" >
+
+                                                <li className='dropdown-item' ><Link className='text-decoration-none'><BiEdit size={'1.3em'} className="me-2 " />Edit</Link></li>
+                                                <Link onClick={() => deletePost(item.id)} className='dropdown-item text-decoration-none'> <BiTrash size={'1.3em'} className="me-2" />Delete</Link>
+                                            </ul>
+                                        </div>
+
+
                                     </div>
-                                    <img className="post-image" src={`${config.apiUrl}${item.image && item.image.image}`} key={index} alt="beach" />
+                                    <img className="post-image " src={`${config.apiUrl}${item.image && item.image.image}`} key={index} alt="beach" />
                                 </div>
                                 <div className="m-1">
                                     <p className='text-center post-description' key={index} >{item.title}</p>
                                 </div>
-                                <div className="m-1 d-flex justify-content-around border-bottom" key={index} >
+                                <div className="d-flex justify-content-around">
+                                    <li key={index} onClick={() => likeButonHandler(item.id)}><Link><AiFillLike size={'2em'} fill={liked ? 'red' : 'black'} style={iconStyle} /></Link></li>
+                                    <li><Link><AiOutlineComment size={'2em'} style={iconStyle} /></Link></li>
+                                    <li><Link><AiOutlineShareAlt size={'2em'} style={iconStyle} /></Link></li>
+                                </div>
+                                <div className="d-flex justify-content-around" key={index} >
                                     <li>{item.likes ? item.likes : 0} Likes</li>
                                     <li>{item.comments ? item.comments : 0} Comments</li>
                                     <li>{item.share ? item.comments : 0} Shares</li>
                                 </div>
 
-                                <div className="m-1 d-flex justify-content-around">
-                                    <li key={index} onClick={() => likeButonHandler(item.id)}><Link><AiFillLike size={'2em'} fill={liked ? 'red' : 'black'} style={iconStyle} /></Link></li>
-                                    <li><Link><AiOutlineComment size={'2em'} style={iconStyle} /></Link></li>
-                                    <li><Link><AiOutlineShareAlt size={'2em'} style={iconStyle} /></Link></li>
-                                </div>
+
                             </div>
                         </div>
                     )

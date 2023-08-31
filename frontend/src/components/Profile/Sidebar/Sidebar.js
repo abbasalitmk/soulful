@@ -7,18 +7,19 @@ import {
 } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import avatar from "../../../assets/avatar.jpeg";
 
 const Sidebar = (props) => {
   const iconStyle = {
     marginRight: "1rem",
   };
   const linkStyle = {
-    color: "black",
+    color: "#000",
     textDecoration: "none",
   };
 
   return (
-    <div className="col-3 sidebar-container">
+    <div className="col-md-3 sidebar-container">
       <div className="">
         <ul>
           <li>

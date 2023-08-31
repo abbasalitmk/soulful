@@ -45,3 +45,13 @@ class PostLikeView(APIView):
 
         except Post.DoesNotExist:
             return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class PostDeleteView(APIView):
+    def post(self, request, id):
+        try:
+            post = Post.objects.get(pk=id)
+            post.delete()
+            return Response({'message': 'Post Deleted Successfully'}, status=status.HTTP_200_OK)
+        except Post.DoesNotExist:
+            return Response({'message': "Post Doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
