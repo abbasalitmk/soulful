@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Image, Comment
+from .models import Post, Image, Comment, Like
 from django.contrib.auth import get_user_model
 
 
@@ -40,6 +40,7 @@ class ImageSerializer(serializers.ModelSerializer):
 
 class PostRetrieveSerilizer(serializers.ModelSerializer):
     image = ImageSerializer()
+    like_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Post

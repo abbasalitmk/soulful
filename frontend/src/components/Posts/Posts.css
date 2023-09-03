@@ -5,9 +5,6 @@
     box-shadow: 0px 0 3px 0px #b9a1a1;
 }
 
-.new-post-form{
-    background-color: rgb(255, 255, 255);
-}
 
 .new-post-form::placeholder{
     font-size: 1.5rem;
@@ -16,9 +13,9 @@
 }
 
 .post-image{
-    margin-top:1rem;
-    max-width: 40vw;
-    max-height: 70vh;
+    margin-top:.5rem;
+    max-width: 45vw;
+    max-height: 60vh;
    
     
 }
@@ -27,15 +24,54 @@
 }
 .new-status-form{
     margin-top: 2rem;
-    background-color: rgb(239 239 239);
+    background-color: rgb(255, 255, 255);
     box-shadow: 0px 0 3px 0px #b9a1a1;
     padding: 10px;
 }
 .post-description{
-    font-size: 1.1rem;
-    margin-top: .5rem;
+    text-align: left;
+    margin-top: 1em;
+    padding: 0 1em 0 1em;
+
+    
 }
 
 .post-options{
     text-align: right;
 }
+
+.like-button-click-effect{
+  animation: wobble 0.5s ease infinite;
+}
+
+@keyframes wobble {
+  0%, 100% {
+    transform: scale(1);
+  }
+  15% {
+    transform: scale(1.25) rotate(-5deg);
+  }
+  30% {
+    transform: scale(0.75) rotate(5deg);
+  }
+  45% {
+    transform: scale(1.15) rotate(-3deg);
+  }
+  60% {
+    transform: scale(0.95) rotate(3deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.post-owner{
+  text-align: center;
+}
+
+.post-owner-img{
+  height: 50px;
+  width: 50px;
+  border-radius: 100px;
+  object-fit:cover;
+}
+

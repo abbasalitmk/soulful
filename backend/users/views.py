@@ -5,6 +5,7 @@ from .serializer import (
     UserProfileSerializer,
     UserPreferenceSerializer,
     UserProfilePictureSerializer,
+    FollowUserSerializer,
 )
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -17,7 +18,7 @@ from utils import generate_email_verification_token
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from .models import UserProfile, UserPreferences, Images, Followers
+from .models import UserProfile, UserPreferences, Images, Followers, MyUser
 from django.db.models import Q
 import json
 
@@ -191,16 +192,23 @@ class RetrieveAllUsersView(APIView):
             user_data = []
 
             for user in users:
+
                 profile_picture = Images.objects.filter(
                     user=user.user).order_by('-pk').first()
                 user_profile_serializer = UserProfileSerializer(user)
                 picture_serlializer = UserProfilePictureSerializer(
                     profile_picture) if profile_picture else None
+
+                # check user folllowed the current profile
+                follow_status = Followers.objects.filter(
+                    user=request.user, followed_user=user.user).exists()
+
                 user_data.append({
                     'id': user_profile_serializer.data['user'],
                     'name': user_profile_serializer.data['first_name'],
                     'location': user_profile_serializer.data['place'],
                     'image': picture_serlializer.data['image'] if picture_serlializer else None,
+                    'follow': follow_status
                 })
             return Response(user_data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -213,12 +221,19 @@ class FollowUserView(APIView):
     def post(self, request, user_id):
         try:
             current_user = request.user
-            followed_user = MyUser.objects.get(id=user_id)
+            followed_user = MyUser.objects.get(pk=user_id)
 
-            follow = Followers.objects.create(
-                user=current_user, followed_user=followed_user)
-            follow.save()
-            return Response({'message': "followed"})
+            if not Followers.objects.filter(user=current_user, followed_user=followed_user).exists():
+                follow = Followers.objects.create(
+                    user=current_user, followed_user=followed_user)
+                follow.save()
+                serializer = FollowUserSerializer(follow)
+                return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+            else:
+                followed_user = Followers.objects.filter(
+                    user=current_user, followed_user=followed_user)
+                followed_user.delete()
+                return Response({'message': "Unfollowed"}, status=status.HTTP_202_ACCEPTED)
 
         except Exception as e:
-            return Response({'message': str(e)})
+            return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

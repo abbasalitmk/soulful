@@ -22,5 +22,5 @@ urlpatterns = [
     path('profile-picture/', ProfilePictureUploadView.as_view(),
          name='profile_picture'),
     path('all-users/', RetrieveAllUsersView.as_view(), name='all_users'),
-    path('follow/<int:id>', FollowUserView.as_view(), name='follow_user'),
+    path('follow/<int:user_id>', FollowUserView.as_view(), name='follow_user'),
 ]

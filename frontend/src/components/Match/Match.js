@@ -3,10 +3,11 @@ import pic from "../../assets/avatar.jpeg";
 import Navbar from "../Navbar/Navbar";
 import Sidebar from "../Sidebar/Sidebar";
 import "./Match.css";
-import { BsHeartFill } from "react-icons/bs";
+import { BsHeartFill, BsFillHeartbreakFill } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../../config";
+import toast from "react-hot-toast";
 
 const Match = () => {
   const token = useSelector((state) => state.auth.token);
@@ -42,6 +43,35 @@ const Match = () => {
     console.log(userData);
   }, [userData]);
 
+  const userFollowingHandler = async (user_id) => {
+    try {
+      console.log(token.access);
+      const response = await axios.post(
+        `http://127.0.0.1:8000/user/follow/${user_id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token.access}`,
+          },
+        }
+      );
+      if (response.status === 201) {
+        toast.success("Your are Followed");
+        console.log(response.data);
+        fetchData();
+      } else if (response.status === 202) {
+        toast.success("Your are Unfollowed");
+        fetchData();
+      } else {
+        toast.error("Something Happened");
+      }
+
+      console.log(response.data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -61,9 +91,35 @@ const Match = () => {
                         src={item.image ? config.baseUrl + item?.image : pic}
                         alt=""
                       />
-                      <button className="follow-button">
-                        <BsHeartFill size={"1.1em"} />
-                      </button>
+                      {item?.follow ? (
+                        <>
+                          <button
+                            onClick={() => userFollowingHandler(item.id)}
+                            className="follow-button"
+                          >
+                            <BsFillHeartbreakFill size={"1.3em"} />
+                          </button>
+                          <button
+                            onClick={() => userFollowingHandler(item.id)}
+                            className="follow-button"
+                          >
+                            <BsFillHeartbreakFill size={"1.3em"} />
+                          </button>{" "}
+                          <button
+                            onClick={() => userFollowingHandler(item.id)}
+                            className="follow-button"
+                          >
+                            <BsFillHeartbreakFill size={"1.3em"} />
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => userFollowingHandler(item.id)}
+                          className="follow-button"
+                        >
+                          <BsHeartFill size={"1.3em"} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
