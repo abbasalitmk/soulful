@@ -10,11 +10,6 @@ class Image (models.Model):
     image = models.ImageField(upload_to='post-image')
 
 
-class Comment (models.Model):
-    text = models.CharField(max_length=255)
-    created_at = models.TimeField(auto_now_add=True)
-
-
 class Post(models.Model):
 
     title = models.CharField(max_length=255)
@@ -28,8 +23,6 @@ class Post(models.Model):
     share_count = models.IntegerField(blank=True, null=True)
     image = models.ForeignKey(
         Image, on_delete=models.DO_NOTHING)
-    comment = models.ForeignKey(
-        Comment, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -43,3 +36,11 @@ class Like (models.Model):
 
     class Meta:
         unique_together = ('liked_user', 'post')
+
+
+class Comment (models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True)
+    text = models.CharField(max_length=255)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)

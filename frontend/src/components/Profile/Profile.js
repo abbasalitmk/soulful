@@ -19,7 +19,7 @@ import {
 import { FcCamera } from "react-icons/fc";
 
 const Profile = () => {
-  const user = JSON.parse(useSelector((state) => state.auth.user));
+  const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
   const [userData, setUserData] = useState({});
   const [image, setImage] = useState();

@@ -25,16 +25,13 @@ const validationSchema = Yup.object().shape({
 
 const EditProfile = () => {
   const token = useSelector((state) => state.auth.token);
-  const user = JSON.parse(useSelector((state) => state.auth.user));
+  const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
 
   useEffect(() => {
     console.log(user);
     if (user.profile_completed === true) {
       navigate("/posts");
-    } else {
-      toast.error("User profile not completed");
-      navigate("/edit-profile");
     }
   }, []);
 
@@ -107,7 +104,8 @@ const EditProfile = () => {
         }
       );
       if (response.status === 200) {
-        console.log(response.data);
+        navigate("/profile");
+        toast.success("Profile updated!");
       }
     } catch (error) {
       console.log(error.response.data);
@@ -115,7 +113,7 @@ const EditProfile = () => {
   };
 
   return (
-    <Fragment>
+    <>
       <Navbar />
       <div className="container step-container mt-5 col-md-8 p-2">
         <div className="row justify-content-center">
@@ -154,7 +152,7 @@ const EditProfile = () => {
           </div>
         </div>
       </div>
-    </Fragment>
+    </>
   );
 };
 export default EditProfile;

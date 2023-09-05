@@ -62,6 +62,7 @@ const Register = () => {
           toast.error("Error :" + errorMessage.non_field_errors[0]);
         } else {
           toast.error("Something went wrong");
+          console.log(errorMessage);
         }
       }
     } finally {
@@ -115,7 +116,7 @@ const Register = () => {
                   name=""
                   id=""
                   className="form-control rounded-pill"
-                  placeholder="John Doe"
+                  placeholder="Elon Musk"
                   aria-describedby="helpId"
                 />
               </div>
@@ -129,7 +130,7 @@ const Register = () => {
                   name=""
                   id=""
                   className="form-control rounded-pill"
-                  placeholder="johndoe@gmail.com"
+                  placeholder="elone@gmail.com"
                   aria-describedby="helpId"
                 />
               </div>

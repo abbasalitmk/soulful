@@ -69,7 +69,6 @@ class VerifyEmailView(APIView):
     def get(self, request):
 
         token = request.query_params.get('token')
-        print(f'token is : {token}')
 
         try:
             token_data = RefreshToken(token).payload
@@ -165,6 +164,8 @@ class ProfilePictureUploadView(APIView):
         return Response({'message': serializer.errors})
 
 
+# Retrieve all user to display in match section
+
 class RetrieveAllUsersView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -183,8 +184,11 @@ class RetrieveAllUsersView(APIView):
                     user__user_preference__interests__icontains=interest)
                 interests_query |= q_object
 
-            matching_query = Q(gender=user_preferences.gender) & (Q(
+            default_matching_query = Q(gender=user_preferences.gender) & (Q(
                 place__iexact=place) | interests_query)
+            user_matching_query = Q(gender__in=['male', 'female'])
+
+            matching_query = default_matching_query if user_matching_query is None else user_matching_query
 
             users = UserProfile.objects.filter(
                 matching_query).exclude(user=request.user)

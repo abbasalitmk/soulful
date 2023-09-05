@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .serializers import PostSerializer, PostRetrieveSerilizer
+from .serializers import PostSerializer, PostRetrieveSerilizer, CommentSerializer
 from users.serializer import UserProfileSerializer, UserProfilePictureSerializer
-from .models import Post, Image, Like
+from .models import Post, Image, Like, Comment
 from users.models import UserProfile, Images as Profile_picture
 
 from rest_framework.response import Response
@@ -34,13 +34,15 @@ class GetAllPostView(APIView):
                 user=post.user).order_by('-pk').first()
             profile_picture_serializer = UserProfilePictureSerializer(
                 profile_picture)
+            comment_count = Comment.objects.filter(post=post).count()
 
             post_data.append({
                 **serializer.data,
                 'like_count': like_count,
                 'like_status': like_status,
                 'post_owner': profile_serializer.data.get('first_name'),
-                'profile_picture': profile_picture_serializer.data.get('image')
+                'profile_picture': profile_picture_serializer.data.get('image'),
+                'comment_count': comment_count
             })
         print(post_data)
 
@@ -87,3 +89,26 @@ class PostDeleteView(APIView):
             return Response({'message': 'Post Deleted Successfully'}, status=status.HTTP_200_OK)
         except Post.DoesNotExist:
             return Response({'message': "Post Doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class PostCommentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        post = Post.objects.get(id=post_id)
+
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(post=post, user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, post_id):
+        try:
+            post = Post.objects.get(id=post_id)
+            comments = Comment.objects.filter(post=post)
+            serializer = CommentSerializer(comments, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except post.DoesNotExist:
+            return Response({error: "Post not found!"})

@@ -75,3 +75,29 @@
   object-fit:cover;
 }
 
+.comment-text{
+  background-color: #f5f5f5;
+  border-radius: 1rem;
+  box-shadow: 0px 0px 4px 0px grey;
+  font-size: .9rem;
+  
+ 
+
+}
+/* Custom modal styles */
+.custom-modal {
+  max-height: auto;
+  /* Adjust the maximum height as needed */
+  
+}
+.comments-container{
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+
+
+/* Add space between comments */
+.comment {
+  margin: 10px 0;
+}

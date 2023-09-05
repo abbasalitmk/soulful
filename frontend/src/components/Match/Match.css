@@ -23,13 +23,19 @@
     left: 50%;
     
     transform: translate(-50%, 170%);
-    background-color: #ff4136;
+    
     color: white;
     
     border: none;
     border-radius: 50%;
     cursor: pointer;
     transition: transform 0.3s, background-color 0.3s, transform 0.3s;
+}
+.if_followed{
+    background-color: #04b146;
+}
+.if_not_followed{
+    background-color: #ff4136;
 }
 
 .follow-button:hover {
@@ -38,24 +44,33 @@
 }
 
 
-.person-name{
+.person-name {
     position: absolute;
-    top:50%;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, 100%);
-    color: #ffff;
-    font-size: 1.2em;
+    transform: translate(-50%, 30%);
+    padding: 2px 5px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    color: #ffffff;
+    font-size: 1.1em;
     white-space: nowrap;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
+
 
 .person-location {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, 230%);
-    color: #ffff;
+    transform: translate(-50%, 150%);
+    padding: 2px 5px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    color: #ffffff;
     font-size: 1em;
     white-space: nowrap;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 .image-container img{
     width: 100%;

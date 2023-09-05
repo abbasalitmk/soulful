@@ -21,7 +21,6 @@ function App() {
       <Router>
         <Routes>
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/match" element={<Match />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route
@@ -31,6 +30,8 @@ function App() {
           <Route path="/logout" element={<Logout />} />
 
           <Route element={<PrivateRoute />}>
+            <Route path="/match" element={<Match />} />
+
             <Route path="/posts" element={<PostsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/edit-profile" element={<EditProfile />} />

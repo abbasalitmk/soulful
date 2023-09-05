@@ -6,9 +6,12 @@ import logo from "../assets/logo.png";
 
 import { toast } from "react-hot-toast";
 import Navbar from "../components/Navbar/Navbar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setToken, setUser } from "../features/auth/authSlice";
 
 const VerifyEmail = (props) => {
+  const dispatch = useDispatch();
+
   const [verified, setVerified] = useState(false);
   const navigate = useNavigate();
   const { token } = useParams();
@@ -19,21 +22,16 @@ const VerifyEmail = (props) => {
       const response = await axios.get(
         `http://127.0.0.1:8000/user/verify-email/?token=${token}`
       );
-      if (response === 200) {
-        toast.success("verified");
+      if (response.status === 200) {
         setVerified(true);
-
-        if (user.profile_completed) {
-          navigate("/`posts`");
-        } else {
-          navigate("/edit-profile");
-        }
+        navigate("/login");
+        toast.success("Email Verified. Login to continue");
       }
     } catch (error) {
       if (error) {
         if (error.response.data.error === "user already verified") {
           // toast.error(error.response.data.error);
-          navigate("/login");
+          navigate("/posts");
         }
       }
     }

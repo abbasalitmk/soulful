@@ -13,6 +13,7 @@
 .profile-avatar{
    height: auto;
    width: auto;
+   min-height: 40vh;
    border-radius: 1.6em;
    object-fit: cover;
 }

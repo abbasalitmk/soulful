@@ -6,7 +6,13 @@ import {
   AiOutlineComment,
   AiOutlineShareAlt,
 } from "react-icons/ai";
-import { BiEdit, BiTrash, BiMenu, BiSolidTime } from "react-icons/bi";
+import {
+  BiEdit,
+  BiTrash,
+  BiMenu,
+  BiSolidTime,
+  BiSolidUserCircle,
+} from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -14,6 +20,7 @@ import config from "../../config";
 import { FallingLines } from "react-loader-spinner";
 import toast from "react-hot-toast";
 import moment from "moment";
+import Modal from "react-bootstrap/Modal";
 
 const Posts = () => {
   const token = useSelector((state) => state.auth.token);
@@ -22,6 +29,10 @@ const Posts = () => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState(null);
+  const [postId, setPostId] = useState(null);
 
   const fetchData = async () => {
     console.log(token.access);
@@ -82,7 +93,7 @@ const Posts = () => {
         const likeButton = document.getElementById(`like-button-${id}`);
         likeButton.classList.add("like-button-click-effect");
 
-        // Remove the class after a short duration (e.g., 300ms) to indicate the click effect
+        // Remove the className after a short duration (e.g., 300ms) to indicate the click effect
         setTimeout(() => {
           likeButton.classList.remove("like-button-click-effect");
         }, 300);
@@ -158,6 +169,63 @@ const Posts = () => {
   const iconStyle = {
     color: "#000",
     textDecoration: "none",
+  };
+
+  // fetch comments
+  const handleComments = async (post_id) => {
+    setPostId(post_id);
+    setShowModal(!showModal);
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/posts/comment/${post_id}`,
+
+        {
+          headers: {
+            Authorization: `Bearer ${token.access}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setComments(response.data);
+        console.log(comments);
+      }
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  //add new comment
+  const commentPostHandler = async () => {
+    console.log(commentText);
+    try {
+      const response = await axios.post(
+        `http://127.0.0.1:8000/posts/comment/${postId}`,
+        {
+          text: commentText,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token.access}`,
+          },
+        }
+      );
+      if (response.status === 201) {
+        console.log(response.data);
+        setCommentText(null);
+        setShowModal(false);
+        toast.success("Comment posted successfully");
+        setData((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === postId
+              ? { ...post, comment_count: post.comment_count + 1 }
+              : post
+          )
+        );
+      }
+    } catch (error) {
+      console.log(error.response);
+    }
   };
 
   return (
@@ -304,7 +372,9 @@ const Posts = () => {
               <div className="m-1">
                 <div className="d-flex justify-content-around" key={index}>
                   <li>{item.like_count ? item.like_count : 0} Likes</li>
-                  <li>{item.comments ? item.comments : 0} Comments</li>
+                  <li>
+                    {item.comment_count ? item.comment_count : 0} Comments
+                  </li>
                   <li>{item.share ? item.comments : 0} Shares</li>
                 </div>
               </div>
@@ -320,7 +390,7 @@ const Posts = () => {
                     />
                   </Link>
                 </li>
-                <li>
+                <li onClick={() => handleComments(item.id)}>
                   <Link>
                     <AiOutlineComment size={"2em"} style={iconStyle} />
                   </Link>
@@ -335,6 +405,69 @@ const Posts = () => {
           </div>
         );
       })}
+
+      {/* Render the comment modal conditionally */}
+      {showModal && (
+        <Modal
+          show={true}
+          onHide={() => setShowModal(false)}
+          centered
+          className="custom-modal"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Comments</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="comments-container">
+              {comments && comments.length > 0 ? (
+                comments.map((item) => {
+                  return (
+                    <div className="row m-2 p-1">
+                      <div className="comment-text">
+                        <h5 className="p-2">
+                          <q>{item.text}</q>
+                        </h5>
+                        <hr />
+                        <div className="d-flex justify-content-between">
+                          <p>
+                            <BiSolidUserCircle className="me-1" />{" "}
+                            {item.user_name}
+                          </p>
+                          <p>
+                            <BiSolidTime className="me-1" />
+                            {moment(item.created_at).fromNow()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <p>No Comments</p>
+              )}
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <div className="input-group mb-3 input-group-lg">
+              <input
+                onChange={(e) => setCommentText(e.target.value)}
+                value={commentText}
+                type="text"
+                className="form-control input-group-lg"
+                placeholder="Post your comment"
+              />
+              <button
+                className="btn btn-success"
+                type="button"
+                id=""
+                onClick={() => commentPostHandler()}
+              >
+                Post
+              </button>
+            </div>
+          </Modal.Footer>
+        </Modal>
+      )}
     </div>
   );
 };

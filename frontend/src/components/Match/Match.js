@@ -83,7 +83,7 @@ const Match = () => {
             {userData && userData.length > 0 ? (
               userData?.map((item) => {
                 return (
-                  <div className="col-md-3">
+                  <div className="col-md-3 mb-3">
                     <div className="image-container">
                       <p className="person-name">{item?.name}</p>
                       <p className="person-location">{item?.location}</p>
@@ -95,19 +95,7 @@ const Match = () => {
                         <>
                           <button
                             onClick={() => userFollowingHandler(item.id)}
-                            className="follow-button"
-                          >
-                            <BsFillHeartbreakFill size={"1.3em"} />
-                          </button>
-                          <button
-                            onClick={() => userFollowingHandler(item.id)}
-                            className="follow-button"
-                          >
-                            <BsFillHeartbreakFill size={"1.3em"} />
-                          </button>{" "}
-                          <button
-                            onClick={() => userFollowingHandler(item.id)}
-                            className="follow-button"
+                            className="follow-button if_followed"
                           >
                             <BsFillHeartbreakFill size={"1.3em"} />
                           </button>
@@ -115,7 +103,7 @@ const Match = () => {
                       ) : (
                         <button
                           onClick={() => userFollowingHandler(item.id)}
-                          className="follow-button"
+                          className="follow-button if_not_followed"
                         >
                           <BsHeartFill size={"1.3em"} />
                         </button>

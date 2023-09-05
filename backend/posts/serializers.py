@@ -7,9 +7,13 @@ User = get_user_model()
 
 
 class CommentSerializer (serializers.ModelSerializer):
+    post = serializers.PrimaryKeyRelatedField(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    user_name = serializers.CharField(source='user.name', read_only=True)
+
     class Meta:
         model = Comment
-        fields = ('text')
+        fields = '__all__'
 
 
 class PostSerializer(serializers.ModelSerializer):
