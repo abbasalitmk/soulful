@@ -12,6 +12,9 @@ import Logout from "./utils/Logout";
 import EditProfile from "./components/Register/EditProfile";
 import ProfilePage from "./pages/ProfilePage";
 import Match from "./components/Match/Match";
+import ChatRoom from "./components/Chat/ChatRoom";
+import Followers from "./components/Chat/Followers";
+import ChatPage from "./pages/ChatPage";
 
 function App() {
   return (
@@ -23,11 +26,14 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/followers" element={<Followers />} />
+
           <Route
             path="/email-verification"
             element={<EmailVerificationPage />}
           />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/chat/:roomName" element={<ChatPage />} />
 
           <Route element={<PrivateRoute />}>
             <Route path="/match" element={<Match />} />

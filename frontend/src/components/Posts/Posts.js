@@ -316,7 +316,7 @@ const Posts = () => {
                 <div className="post-header d-flex justify-content-between">
                   <div className="post-owner d-flex justify-content-center text-center">
                     <img
-                      src={config.baseUrl + item.profile_picture}
+                      src={config.media_url + item.profile_picture}
                       alt="avatar"
                       className="post-owner-img"
                     />
@@ -364,7 +364,7 @@ const Posts = () => {
                 <p className="post-description">{item.title}</p>
                 <img
                   className="post-image "
-                  src={`${config.apiUrl}${item.image && item.image.image}`}
+                  src={`${config.media_url}${item.image && item.image.image}`}
                   key={index}
                   alt="beach"
                 />

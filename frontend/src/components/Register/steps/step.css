@@ -1,9 +1,11 @@
-.step-container{
-    background-color: rgb(62 61 61);
-    box-shadow:-1px 1px 5px 0px #f7f7f7;
-    color:#ffff;
-}
-.step-container label{
-    font-size: 1.2rem;
+.step-container {
+    background-image: linear-gradient(13deg, #2cabb0, #68308b);
+    box-shadow: -1px 1px 5px 0px #0c0c0c;
+    color: hwb(0 100% 0%);
+    height: auto;
+    min-height: 70vh;
 }
 
+.step-container label {
+    font-size: 1.2rem;
+}

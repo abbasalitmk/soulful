@@ -8,11 +8,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../../config";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Match = () => {
   const token = useSelector((state) => state.auth.token);
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -36,6 +39,11 @@ const Match = () => {
   };
 
   useEffect(() => {
+    if (!user.profile_completed) {
+      toast.error("Your profile not completed");
+      navigate("/edit-profile");
+    }
+
     fetchData();
   }, []);
 
@@ -88,7 +96,7 @@ const Match = () => {
                       <p className="person-name">{item?.name}</p>
                       <p className="person-location">{item?.location}</p>
                       <img
-                        src={item.image ? config.baseUrl + item?.image : pic}
+                        src={item.image ? config.media_url + item?.image : pic}
                         alt=""
                       />
                       {item?.follow ? (

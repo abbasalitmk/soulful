@@ -32,7 +32,6 @@ class RegisterView(APIView):
         serializer = UserCreateSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            send_email_verification_link(user)
             return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -44,18 +43,6 @@ class UserDetails (APIView):
         user = request.user
         user = UserSerializer(user)
         return Response(user.data)
-
-
-def send_email_verification_link(user):
-    token_data = generate_email_verification_token(user)
-    verification_url = settings.SITE_URL
-    verification_url += f'verify-email/{token_data["refresh"]}'
-    subject = 'Verify your email'
-    message = f'Click the following link to verify your email: {verification_url}'
-    from_email = 'soulfulapp@gmail.com'
-    recipient_list = ['abbasalitmk@gmail.com']
-    send_mail(subject, message, from_email, recipient_list)
-    print('send')
 
 
 # class ResendVerificationLink(APIView):

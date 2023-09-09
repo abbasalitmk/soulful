@@ -17,6 +17,7 @@ import {
   FaTasks,
 } from "react-icons/fa";
 import { FcCamera } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const user = useSelector((state) => state.auth.user);
@@ -24,6 +25,7 @@ const Profile = () => {
   const [userData, setUserData] = useState({});
   const [image, setImage] = useState();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -44,6 +46,11 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    if (!user.profile_completed) {
+      toast.error("Your profile not completed");
+      navigate("/edit-profile");
+    }
+
     fetchData();
   }, []);
 
@@ -107,7 +114,7 @@ const Profile = () => {
                     src={
                       userData.profile_pictures &&
                       userData.profile_pictures.length > 0
-                        ? config.baseUrl + userData.profile_pictures[0].image
+                        ? config.media_url + userData.profile_pictures[0].image
                         : avatar
                     }
                     alt=""
@@ -186,7 +193,7 @@ const Profile = () => {
                         <div className="col-md-6">
                           <img
                             className="small-image img-thumbnail"
-                            src={config.baseUrl + item.image}
+                            src={config.media_url + item.image}
                             alt=""
                             key={item.id}
                           />
