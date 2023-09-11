@@ -33,7 +33,7 @@ function App() {
             element={<EmailVerificationPage />}
           />
           <Route path="/logout" element={<Logout />} />
-          <Route path="/chat/:roomName" element={<ChatPage />} />
+          <Route path="/meet" element={<ChatPage />} />
 
           <Route element={<PrivateRoute />}>
             <Route path="/match" element={<Match />} />

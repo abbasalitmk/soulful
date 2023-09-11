@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import "../Chat/ChatRoom.css";
+import AxiosInstance from "../../AxiosInstance";
+import { useNavigate } from "react-router-dom";
+import config from "../../config";
 
-const ChatRoom = ({ roomName }) => {
+const ChatRoom = () => {
   const [chatLog, setChatLog] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const [socket, setSocket] = useState(null);
   const user = useSelector((state) => state.auth.user);
-  const userData = user ? JSON.parse(user) : null;
+  const [followers, setFollowers] = useState(null);
+  const axios = AxiosInstance();
+  const navigate = useNavigate();
+  const [recipienId, setRecipientId] = useState(null);
+  const sender_id = user.user_id;
 
   useEffect(() => {
-    console.log(user);
     // Create a WebSocket connection when the component mounts
     const chatSocket = new WebSocket(
-      `ws://127.0.0.1:8000/ws/chat/${roomName}/`
+      // `ws://127.0.0.1:8000/ws/chat/${chatRoomName ? chatRoomName : 19}/`
+      `ws://127.0.0.1:8000/ws/chat/${sender_id}/${recipienId}/`
     );
 
     chatSocket.onopen = () => {
@@ -21,8 +28,11 @@ const ChatRoom = ({ roomName }) => {
     };
 
     chatSocket.onmessage = (e) => {
-      const { user_id, message } = JSON.parse(e.data);
-      setChatLog((prevLog) => [...prevLog, { user_id, message }]);
+      const { sender_id, recipient_id, message } = JSON.parse(e.data);
+      setChatLog((prevLog) => [
+        ...prevLog,
+        { sender_id, recipient_id, message },
+      ]);
     };
 
     chatSocket.onclose = () => {
@@ -35,25 +45,50 @@ const ChatRoom = ({ roomName }) => {
     return () => {
       chatSocket.close();
     };
-  }, [roomName]);
+  }, [recipienId]);
 
   const handleSendMessage = () => {
     if (messageInput.trim() === "") return;
 
-    const userName = userData && userData.name;
+    const userName = user && user.name;
     const message = messageInput;
+    const recipient_id = recipienId;
 
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(
         JSON.stringify({
           message,
-          user_id: userName,
+          sender_id: userName,
+          recipient_id: recipient_id,
         })
       );
     }
 
     setMessageInput("");
   };
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/chat/followers/");
+      if (response.status === 200) {
+        console.log(response.data);
+        setFollowers(response.data);
+      }
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const chatHandler = (userId) => {
+    setRecipientId(userId);
+  };
+  useEffect(() => {
+    setChatLog([]);
+  }, [recipienId]);
 
   return (
     <div className="col-md-12">
@@ -67,170 +102,56 @@ const ChatRoom = ({ roomName }) => {
               <div className="card">
                 <div className="card-body">
                   <ul className="list-unstyled mb-0">
-                    <li
-                      className="p-2 border-bottom"
-                      style={{ backgroundColor: "#eee" }}
-                    >
-                      <a href="#!" className="d-flex justify-content-between">
-                        <div className="d-flex flex-row">
-                          <img
-                            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp"
-                            alt="avatar"
-                            className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-                            width="60"
-                          />
-                          <div className="pt-1">
-                            <p className="fw-bold mb-0">John Doe</p>
-                            <p className="small text-muted">
-                              Hello, Are you there?
-                            </p>
-                          </div>
-                        </div>
-                        <div className="pt-1">
-                          <p className="small text-muted mb-1">Just now</p>
-                          <span className="badge bg-danger float-end">1</span>
-                        </div>
-                      </a>
-                    </li>
-                    <li className="p-2 border-bottom">
-                      <a href="#!" className="d-flex justify-content-between">
-                        <div className="d-flex flex-row">
-                          <img
-                            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp"
-                            alt="avatar"
-                            className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-                            width="60"
-                          />
-                          <div className="pt-1">
-                            <p className="fw-bold mb-0">Danny Smith</p>
-                            <p className="small text-muted">
-                              Lorem ipsum dolor sit.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="pt-1">
-                          <p className="small text-muted mb-1">5 mins ago</p>
-                        </div>
-                      </a>
-                    </li>
-                    <li className="p-2 border-bottom">
-                      <a href="#!" className="d-flex justify-content-between">
-                        <div className="d-flex flex-row">
-                          <img
-                            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-2.webp"
-                            alt="avatar"
-                            className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-                            width="60"
-                          />
-                          <div className="pt-1">
-                            <p className="fw-bold mb-0">Alex Steward</p>
-                            <p className="small text-muted">
-                              Lorem ipsum dolor sit.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="pt-1">
-                          <p className="small text-muted mb-1">Yesterday</p>
-                        </div>
-                      </a>
-                    </li>
-                    <li className="p-2 border-bottom">
-                      <a href="#!" className="d-flex justify-content-between">
-                        <div className="d-flex flex-row">
-                          <img
-                            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-3.webp"
-                            alt="avatar"
-                            className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-                            width="60"
-                          />
-                          <div className="pt-1">
-                            <p className="fw-bold mb-0">Ashley Olsen</p>
-                            <p className="small text-muted">
-                              Lorem ipsum dolor sit.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="pt-1">
-                          <p className="small text-muted mb-1">Yesterday</p>
-                        </div>
-                      </a>
-                    </li>
-                    <li className="p-2 border-bottom">
-                      <a href="#!" className="d-flex justify-content-between">
-                        <div className="d-flex flex-row">
-                          <img
-                            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-4.webp"
-                            alt="avatar"
-                            className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-                            width="60"
-                          />
-                          <div className="pt-1">
-                            <p className="fw-bold mb-0">Kate Moss</p>
-                            <p className="small text-muted">
-                              Lorem ipsum dolor sit.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="pt-1">
-                          <p className="small text-muted mb-1">Yesterday</p>
-                        </div>
-                      </a>
-                    </li>
-                    <li className="p-2 border-bottom">
-                      <a href="#!" className="d-flex justify-content-between">
-                        <div className="d-flex flex-row">
-                          <img
-                            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-5.webp"
-                            alt="avatar"
-                            className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-                            width="60"
-                          />
-                          <div className="pt-1">
-                            <p className="fw-bold mb-0">Lara Croft</p>
-                            <p className="small text-muted">
-                              Lorem ipsum dolor sit.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="pt-1">
-                          <p className="small text-muted mb-1">Yesterday</p>
-                        </div>
-                      </a>
-                    </li>
-                    <li className="p-2">
-                      <a href="#!" className="d-flex justify-content-between">
-                        <div className="d-flex flex-row">
-                          <img
-                            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
-                            alt="avatar"
-                            className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-                            width="60"
-                          />
-                          <div className="pt-1">
-                            <p className="fw-bold mb-0">Brad Pitt</p>
-                            <p className="small text-muted">
-                              Lorem ipsum dolor sit.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="pt-1">
-                          <p className="small text-muted mb-1">5 mins ago</p>
-                          <span className="text-muted float-end">
-                            <i className="fas fa-check" aria-hidden="true"></i>
-                          </span>
-                        </div>
-                      </a>
-                    </li>
+                    {followers &&
+                      followers.length &&
+                      followers.map((item) => (
+                        <li
+                          className="p-2"
+                          key={item.id}
+                          onClick={() => chatHandler(item.followed_user)}
+                        >
+                          <a
+                            href="#!"
+                            className="d-flex justify-content-between"
+                          >
+                            <div className="d-flex flex-row">
+                              <img
+                                src={`${config.media_url}${item.image}`}
+                                alt="avatar"
+                                className="rounded-circle d-flex align-self-center me-3 shadow-1-strong followers-avatar"
+                              />
+                              <div className="pt-1">
+                                <p className="fw-bold mb-0 text-decoration-none">
+                                  {item.name}
+                                </p>
+                                <p className="small text-muted">Available</p>
+                              </div>
+                            </div>
+                            <div className="pt-1">
+                              <p className="small text-muted mb-1">
+                                5 mins ago
+                              </p>
+                              <span className="text-muted float-end">
+                                <i
+                                  className="fas fa-check"
+                                  aria-hidden="true"
+                                ></i>
+                              </span>
+                            </div>
+                          </a>
+                        </li>
+                      ))}
                   </ul>
                 </div>
               </div>
             </div>
             <div className="col-md-6 col-lg-7 col-xl-8 chat-container">
+              <h3>Roomname: {recipienId}</h3>
               <ul className="list-unstyled">
                 {chatLog.map((log, index) => (
                   <li
                     className={`d-flex mb-2 justify-content-${
-                      log.user_id === userData.name ? "end" : "start"
+                      log.sender_id === user.name ? "end" : "start"
                     }`}
                     key={index}
                   >
@@ -242,10 +163,8 @@ const ChatRoom = ({ roomName }) => {
                     />
                     <div className="card">
                       <div className="card-header d-flex justify-content-between p-2">
-                        <p className="fw-bold mb-0">
-                          {log.user_id}
-                          {userData.name}
-                        </p>
+                        <p className="fw-bold mb-0">{log.sender_id}</p>
+
                         <p className="text-muted small mb-0">
                           <i className="far fa-clock"></i> 12 mins ago
                         </p>

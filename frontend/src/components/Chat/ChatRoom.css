@@ -2,3 +2,8 @@
     max-height: 80vh;
     overflow-x: auto;
 }
+.followers-avatar{
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}

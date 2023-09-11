@@ -39,10 +39,10 @@ const Match = () => {
   };
 
   useEffect(() => {
-    if (!user.profile_completed) {
-      toast.error("Your profile not completed");
-      navigate("/edit-profile");
-    }
+    // if (userObj.profile_completed !== true) {
+    //   toast.error("Your profile not completed");
+    //   navigate("/edit-profile");
+    // }
 
     fetchData();
   }, []);

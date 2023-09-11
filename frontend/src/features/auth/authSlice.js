@@ -1,13 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { useNavigate } from "react-router-dom";
-import jwt_decode from "jwt-decode";
+
+const userFromStorage = localStorage.getItem("user") || null;
+const user =
+  typeof userFromStorage === "string"
+    ? JSON.parse(userFromStorage)
+    : userFromStorage;
 
 const authSlice = createSlice({
   name: "auth",
   initialState: {
     token: JSON.parse(localStorage.getItem("access")) || null,
     isAuthenticated: localStorage.getItem("access") ? true : false,
-    user: localStorage.getItem("user") || null,
+    user: user,
   },
   reducers: {
     setToken: (state, action) => {
