@@ -83,7 +83,7 @@ class StoreUserDetails(APIView):
         if user.profile_completed == True:
             return Response({'error': 'Profile already Updated'})
 
-        user_details = {
+        user_details_data = {
             'user': request.user.pk,
             'first_name': request.data.get('firstName'),
             'last_name': request.data.get('lastName'),
@@ -91,28 +91,23 @@ class StoreUserDetails(APIView):
             'gender': request.data.get('gender'),
             'place': request.data.get('place'),
             'state': request.data.get('state'),
-            'country': request.data.get('country')
-
-        }
-        user_preference = {
-            'user': request.user.pk,
-            'gender': request.data.get('prefered_gender'),
-            'interests': request.data.get('interests')
+            'country': request.data.get('country'),
+            'skinColor': request.data.get('skinColor'),
+            'hairColor': request.data.get('hairColor'),
+            'height': request.data.get('height'),
+            'weight': request.data.get('weight'),
         }
 
-        user_details_serializer = UserProfileSerializer(data=user_details)
-        user_preference_serializer = UserPreferenceSerializer(
-            data=user_preference)
-        # user_preference_serializer = UserPreferenceSerializer
-        if user_details_serializer.is_valid() and user_preference_serializer.is_valid():
+        user_details_serializer = UserProfileSerializer(data=user_details_data)
+
+        if user_details_serializer.is_valid():
             user_details_serializer.save()
-            user_preference_serializer.save()
 
             user.profile_completed = True
             user.save()
-            return Response({'user_details': user_details_serializer.data, 'user_preference': user_preference_serializer.data}, status=status.HTTP_200_OK)
+            return Response({'user_details': user_details_serializer.data}, status=status.HTTP_200_OK)
 
-        return Response({'user_details': user_details_errors, 'user_preference': user_preference_errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'user_details': user_details_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RetrieveUserProfile(APIView):
@@ -122,18 +117,18 @@ class RetrieveUserProfile(APIView):
         try:
             user = request.user
             user_profile = UserProfile.objects.filter(user=user).first()
-            user_preferences = UserPreferences.objects.filter(
-                user=user).first()
+            # user_preferences = UserPreferences.objects.filter(
+            #     user=user).first()
             profile_pictures = Images.objects.filter(
                 user=user).order_by('-pk')[:5]
 
             user_profile_serializer = UserProfileSerializer(user_profile)
-            user_preferences_serializer = UserPreferenceSerializer(
-                user_preferences)
+            # user_preferences_serializer = UserPreferenceSerializer(
+            #     user_preferences)
             profile_picture_serializer = UserProfilePictureSerializer(
                 profile_pictures, many=True)
 
-            return Response({'user_profile': user_profile_serializer.data, 'user_preferences': user_preferences_serializer.data, 'profile_pictures': profile_picture_serializer.data}, status=status.HTTP_200_OK)
+            return Response({'user_profile': user_profile_serializer.data, 'profile_pictures': profile_picture_serializer.data}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'message': "User Doesn't exist"})
         return Response({user_profile_serializer.errors})
@@ -158,22 +153,26 @@ class RetrieveAllUsersView(APIView):
 
     def get(self, request):
         try:
-            user_preferences = UserPreferences.objects.get(user=request.user)
             user_profile = UserProfile.objects.get(user=request.user)
             place = user_profile.place
-            user_interests = json.loads(user_preferences.interests)
+            age = user_profile.dob
+            skin = user_profile.skinColor
+            hair = user_profile.hairColor
+            height = user_profile.height
 
             # append each interests matching query to interests_query Q object.
 
-            interests_query = Q()
-            for interest in user_interests:
-                q_object = Q(
-                    user__user_preference__interests__icontains=interest)
-                interests_query |= q_object
+            # interests_query = Q()
+            # for interest in user_interests:
+            #     q_object = Q(
+            #         user__user_preference__interests__icontains=interest)
+            #     interests_query |= q_object
 
-            default_matching_query = Q(gender=user_preferences.gender) & (Q(
-                place__iexact=place) | interests_query)
+            default_matching_query = ~Q(gender=user_profile.gender) & (Q(
+                place__iexact=place) | Q(skinColor__iexact=skin) | Q(hairColor__iexact=hair))
+
             user_matching_query = Q(gender__in=['male', 'female'])
+            # user_matching_query = None
 
             matching_query = default_matching_query if user_matching_query is None else user_matching_query
 

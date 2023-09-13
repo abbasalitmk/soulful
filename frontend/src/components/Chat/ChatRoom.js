@@ -4,6 +4,7 @@ import "../Chat/ChatRoom.css";
 import AxiosInstance from "../../AxiosInstance";
 import { useNavigate } from "react-router-dom";
 import config from "../../config";
+import { RotatingLines } from "react-loader-spinner";
 
 const ChatRoom = () => {
   const [chatLog, setChatLog] = useState([]);
@@ -13,14 +14,16 @@ const ChatRoom = () => {
   const [followers, setFollowers] = useState(null);
   const axios = AxiosInstance();
   const navigate = useNavigate();
-  const [recipienId, setRecipientId] = useState(null);
+  const [recipientId, setRecipientId] = useState(null);
+  const [recipientName, setRecipientName] = useState(null);
   const sender_id = user.user_id;
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Create a WebSocket connection when the component mounts
     const chatSocket = new WebSocket(
-      // `ws://127.0.0.1:8000/ws/chat/${chatRoomName ? chatRoomName : 19}/`
-      `ws://127.0.0.1:8000/ws/chat/${sender_id}/${recipienId}/`
+      `ws://127.0.0.1:8000/ws/chat/${sender_id}/${recipientId}/`
     );
 
     chatSocket.onopen = () => {
@@ -28,11 +31,27 @@ const ChatRoom = () => {
     };
 
     chatSocket.onmessage = (e) => {
-      const { sender_id, recipient_id, message } = JSON.parse(e.data);
+      const {
+        sender,
+        sender_name,
+        receiver,
+        receiver_name,
+        message,
+        profile_pic,
+      } = JSON.parse(e.data);
+      console.log("Received message:", {
+        sender,
+        sender_name,
+        receiver,
+        receiver_name,
+        message,
+        profile_pic,
+      });
       setChatLog((prevLog) => [
         ...prevLog,
-        { sender_id, recipient_id, message },
+        { sender, sender_name, receiver, receiver_name, message },
       ]);
+      console.log(chatLog);
     };
 
     chatSocket.onclose = () => {
@@ -45,21 +64,22 @@ const ChatRoom = () => {
     return () => {
       chatSocket.close();
     };
-  }, [recipienId]);
+  }, [recipientId]);
 
   const handleSendMessage = () => {
     if (messageInput.trim() === "") return;
 
     const userName = user && user.name;
+    const sender = user && user.user_id;
     const message = messageInput;
-    const recipient_id = recipienId;
+    const receiver = recipientId;
 
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(
         JSON.stringify({
           message,
-          sender_id: userName,
-          recipient_id: recipient_id,
+          sender: sender,
+          receiver: receiver,
         })
       );
     }
@@ -83,12 +103,37 @@ const ChatRoom = () => {
     fetchData();
   }, []);
 
-  const chatHandler = (userId) => {
-    setRecipientId(userId);
+  const chatHandler = (recipient, name) => {
+    setRecipientId(recipient);
+    setRecipientName(name);
   };
+
+  // fetch all previous messages from chatroom
+  const fetchMessages = async () => {
+    try {
+      setLoading(true);
+      console.log(user.user_id, recipientId);
+      const response = await axios.get(
+        `chat/messages/${user.user_id}/${recipientId}`
+      );
+
+      if (response.status === 200) {
+        console.log(response.data);
+        const data = response.data;
+        setChatLog((prevLog) => [...prevLog, ...data]);
+        console.log(chatLog);
+      }
+    } catch (error) {
+      console.log(error.response);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     setChatLog([]);
-  }, [recipienId]);
+    fetchMessages();
+  }, [recipientId]);
 
   return (
     <div className="col-md-12">
@@ -96,9 +141,9 @@ const ChatRoom = () => {
         <div className="container py-3">
           <div className="row">
             <div className="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
-              <h5 className="font-weight-bold mb-3 text-center text-lg-start">
-                Member
-              </h5>
+              <h4 className="font-weight-bold mb-3 text-center text-lg-start">
+                Followers
+              </h4>
               <div className="card">
                 <div className="card-body">
                   <ul className="list-unstyled mb-0">
@@ -108,7 +153,9 @@ const ChatRoom = () => {
                         <li
                           className="p-2"
                           key={item.id}
-                          onClick={() => chatHandler(item.followed_user)}
+                          onClick={() =>
+                            chatHandler(item.followed_user, item.name)
+                          }
                         >
                           <a
                             href="#!"
@@ -146,56 +193,75 @@ const ChatRoom = () => {
               </div>
             </div>
             <div className="col-md-6 col-lg-7 col-xl-8 chat-container">
-              <h3>Roomname: {recipienId}</h3>
-              <ul className="list-unstyled">
-                {chatLog.map((log, index) => (
-                  <li
-                    className={`d-flex mb-2 justify-content-${
-                      log.sender_id === user.name ? "end" : "start"
-                    }`}
-                    key={index}
-                  >
-                    <img
-                      src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
-                      alt="avatar"
-                      className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
-                      width="60"
-                    />
-                    <div className="card">
-                      <div className="card-header d-flex justify-content-between p-2">
-                        <p className="fw-bold mb-0">{log.sender_id}</p>
+              {loading ? (
+                <div className="text-center">
+                  <RotatingLines
+                    strokeColor="grey"
+                    strokeWidth="5"
+                    animationDuration="0.75"
+                    width="96"
+                    visible={true}
+                  />
+                  <p>Chat Loading</p>
+                </div>
+              ) : (
+                <ul className="list-unstyled">
+                  <h3 className="text-center">{recipientName}</h3>
+                  {chatLog && chatLog.length > 0 ? (
+                    chatLog.map((log, index) => (
+                      <>
+                        <li
+                          className={`d-flex mb-2 justify-content-${
+                            log.sender === user.user_id ? "end" : "start"
+                          }`}
+                          key={index}
+                        >
+                          <img
+                            src="https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png"
+                            alt="avatar"
+                            className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
+                            width="60"
+                          />
+                          <div className="card">
+                            <div className="card-header d-flex justify-content-between p-2">
+                              <p className="fw-bold mb-0">{log.sender_name}</p>
 
-                        <p className="text-muted small mb-0">
-                          <i className="far fa-clock"></i> 12 mins ago
-                        </p>
-                      </div>
-                      <div className="card-body">
-                        <p className="mb-0">{log.message}</p>
-                      </div>
+                              <p className="text-muted small mb-0">
+                                <i className="far fa-clock"></i> 12 mins ago
+                              </p>
+                            </div>
+                            <div className="card-body">
+                              <p className="mb-0">{log.message}</p>
+                            </div>
+                          </div>
+                        </li>
+                      </>
+                    ))
+                  ) : (
+                    <p className="text-center">No chats</p>
+                  )}
+
+                  <li className="bg-white mb-3">
+                    <div className="form-outline">
+                      <textarea
+                        className="form-control border-2"
+                        id="textAreaExample2"
+                        rows="3"
+                        value={messageInput}
+                        onChange={(e) => setMessageInput(e.target.value)}
+                        placeholder="Type a message..."
+                      ></textarea>
                     </div>
                   </li>
-                ))}
-
-                <li className="bg-white mb-3">
-                  <div className="form-outline">
-                    <textarea
-                      className="form-control"
-                      id="textAreaExample2"
-                      rows="4"
-                      value={messageInput}
-                      onChange={(e) => setMessageInput(e.target.value)}
-                      placeholder="Type a message..."
-                    ></textarea>
-                  </div>
-                </li>
-                <button
-                  type="button"
-                  className="btn btn-info btn-rounded float-end"
-                  onClick={handleSendMessage}
-                >
-                  Send
-                </button>
-              </ul>
+                  <button
+                    type="button"
+                    className="btn btn-info btn-rounded float-end"
+                    onClick={handleSendMessage}
+                  >
+                    Send
+                  </button>
+                </ul>
+              )}
             </div>
           </div>
         </div>

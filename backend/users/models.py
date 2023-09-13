@@ -71,6 +71,10 @@ class UserProfile(models.Model):
     place = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
+    skinColor = models.CharField(max_length=255, null=True, blank=True)
+    hairColor = models.CharField(max_length=255, null=True, blank=True)
+    height = models.PositiveIntegerField(null=True, blank=True)
+    weight = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.user.name

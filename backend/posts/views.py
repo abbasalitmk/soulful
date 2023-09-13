@@ -112,3 +112,11 @@ class PostCommentView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except post.DoesNotExist:
             return Response({error: "Post not found!"})
+
+    def delete(self, request, commentId):
+        try:
+            comment = Comment.objects.get(id=commentId)
+            comment.delete()
+            return Response({"message": "Comment deleted"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)

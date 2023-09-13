@@ -39,17 +39,17 @@ const Profile = () => {
         setUserData(response.data);
       }
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error.response);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (!user.profile_completed) {
-      toast.error("Your profile not completed");
-      navigate("/edit-profile");
-    }
+    // if (!user.profile_completed) {
+    //   toast.error("Your profile not completed");
+    //   navigate("/edit-profile");
+    // }
 
     fetchData();
   }, []);
@@ -167,16 +167,14 @@ const Profile = () => {
                   <p>
                     {userData.user_profile.place}, {userData.user_profile.state}
                   </p>
-
                   <p>
                     <FaTasks className="me-3 text-danger" />
-                    Interests
+                    Hair : {userData.user_profile.hairColor}
                   </p>
-                  <div className="d-flex flex-wrap">
-                    {userData.user_preferences.interests.map((item) => {
-                      return <p className="m-2 interests">{item}</p>;
-                    })}
-                  </div>
+                  <p>
+                    <FaTasks className="me-3 text-danger" />
+                    Skin: {userData.user_profile.skinColor}
+                  </p>
                 </>
               )}
             </div>

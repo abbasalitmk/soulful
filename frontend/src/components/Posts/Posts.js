@@ -21,6 +21,7 @@ import { FallingLines } from "react-loader-spinner";
 import toast from "react-hot-toast";
 import moment from "moment";
 import Modal from "react-bootstrap/Modal";
+import AxiosInstance from "../../AxiosInstance";
 
 const Posts = () => {
   const token = useSelector((state) => state.auth.token);
@@ -33,6 +34,7 @@ const Posts = () => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState(null);
   const [postId, setPostId] = useState(null);
+  const Axios = AxiosInstance();
 
   const fetchData = async () => {
     console.log(token.access);
@@ -225,6 +227,20 @@ const Posts = () => {
       }
     } catch (error) {
       console.log(error.response);
+    }
+  };
+
+  // delete post comment handler
+  const deleteCommentHandler = async (commentId) => {
+    try {
+      console.log(commentId);
+      const response = await Axios.delete(`posts/comment/delete/${commentId}`);
+      if (response.status === 200) {
+        toast.success("Comment deleted");
+        handleComments(postId);
+      }
+    } catch (error) {
+      toast.success("No comment found");
     }
   };
 
@@ -422,15 +438,20 @@ const Posts = () => {
               {comments && comments.length > 0 ? (
                 comments.map((item) => {
                   return (
-                    <div className="row m-2 p-1">
+                    <div className="row m-1 p-1">
                       <div className="comment-text">
-                        <h5 className="p-2">
-                          <q>{item.text}</q>
-                        </h5>
+                        <div className="d-flex justify-content-between mt-1">
+                          <h5 className="mt-2">{item.text}</h5>
+                          <BiTrash
+                            size={"1.2em"}
+                            onClick={() => deleteCommentHandler(item.id)}
+                          />
+                        </div>
+
                         <hr />
                         <div className="d-flex justify-content-between">
                           <p>
-                            <BiSolidUserCircle className="me-1" />{" "}
+                            <BiSolidUserCircle className="me-1" />
                             {item.user_name}
                           </p>
                           <p>

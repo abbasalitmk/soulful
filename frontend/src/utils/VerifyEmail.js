@@ -15,7 +15,7 @@ const VerifyEmail = (props) => {
   const [verified, setVerified] = useState(false);
   const navigate = useNavigate();
   const { token } = useParams();
-  const user = JSON.parse(useSelector((state) => state.auth.user)) || null;
+  const user = useSelector((state) => state.auth.user) || null;
 
   const verify = async () => {
     try {

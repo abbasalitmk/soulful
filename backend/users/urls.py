@@ -17,7 +17,7 @@ urlpatterns = [
 
     path('details/', UserDetails.as_view()),
     path('verify-email/', VerifyEmailView.as_view(), name='verify_email'),
-    path('edit-profile', StoreUserDetails.as_view(), name='edit_profile'),
+    path('edit-profile/', StoreUserDetails.as_view(), name='edit_profile'),
     path('profile/', RetrieveUserProfile.as_view(), name='profile'),
     path('profile-picture/', ProfilePictureUploadView.as_view(),
          name='profile_picture'),

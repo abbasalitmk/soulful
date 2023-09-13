@@ -15,6 +15,7 @@ import Match from "./components/Match/Match";
 import ChatRoom from "./components/Chat/ChatRoom";
 import Followers from "./components/Chat/Followers";
 import ChatPage from "./pages/ChatPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           />
           <Route path="/logout" element={<Logout />} />
           <Route path="/meet" element={<ChatPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
           <Route element={<PrivateRoute />}>
             <Route path="/match" element={<Match />} />

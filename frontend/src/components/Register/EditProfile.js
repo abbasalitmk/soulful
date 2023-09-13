@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import * as Yup from "yup";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import AxiosInstance from "../../AxiosInstance";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required("First Name is required"),
@@ -17,13 +18,19 @@ const validationSchema = Yup.object().shape({
   place: Yup.string().required("Place is required"),
   state: Yup.string().required("State is required"),
   country: Yup.string().required("Country is required"),
-  preferred_gender: Yup.string().required("Select Preferred gender to connect"),
-  interests: Yup.mixed().required(
-    "Enter some interests. It's help to find better matchs"
-  ),
+
+  skinColor: Yup.string().required("Skin Color is required"),
+  hairColor: Yup.string().required("Hair Color is required"),
+  height: Yup.number()
+    .required("Height is required")
+    .positive("Height must be a positive number"),
+  weight: Yup.number()
+    .required("Weight is required")
+    .positive("Weight must be a positive number"),
 });
 
 const EditProfile = () => {
+  const Axios = AxiosInstance();
   const token = useSelector((state) => state.auth.token);
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
@@ -43,10 +50,13 @@ const EditProfile = () => {
     place: "",
     state: "",
     country: "",
-    preferred_gender: "",
-    interests: [],
+    skinColor: "",
+    hairColor: "",
+    height: "",
+    weight: "",
   };
-  const [data, setData] = useState({ initialState });
+  const [data, setData] = useState(initialState);
+
   const [step, setStep] = useState(1);
 
   const validateForm = async () => {
@@ -74,7 +84,6 @@ const EditProfile = () => {
   };
 
   const submitData = async () => {
-    console.log(data.interests);
     const formData = new FormData();
 
     const dob = new Date(data.dob);
@@ -87,15 +96,15 @@ const EditProfile = () => {
     formData.append("place", data.place);
     formData.append("state", data.state);
     formData.append("country", data.country);
-    formData.append("prefered_gender", data.preferred_gender);
 
-    if (data.interests.length > 0) {
-      formData.append("interests", JSON.stringify(data.interests));
-    }
+    formData.append("skinColor", data.skinColor);
+    formData.append("hairColor", data.hairColor);
+    formData.append("height", data.height);
+    formData.append("weight", data.weight);
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/user/edit-profile",
+        "http://127.0.0.1:8000/user/edit-profile/",
         formData,
         {
           headers: {
@@ -104,11 +113,23 @@ const EditProfile = () => {
         }
       );
       if (response.status === 200) {
+        try {
+          const refreshToken = await Axios.post("/api/token/refresh/", {
+            refresh: token.refresh,
+          });
+          console.log(refreshToken);
+          if (refreshToken.status === 200) {
+            console.log("refresh", refreshToken);
+          }
+        } catch (error) {
+          console.log(error.response);
+        }
+
         navigate("/profile");
         toast.success("Profile updated!");
       }
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error.response);
     }
   };
 

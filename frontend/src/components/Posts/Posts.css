@@ -14,10 +14,8 @@
 
 .post-image{
     margin-top:.5rem;
-    max-width: 45vw;
-    max-height: 60vh;
-   
-    
+    width: 100%;
+
 }
 .image-preview{
     max-width: 20vw;
