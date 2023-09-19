@@ -18,9 +18,12 @@ from utils import generate_email_verification_token
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from .models import UserProfile, UserPreferences, Images, Followers, MyUser
+from .models import UserProfile, UserPreferences, Images, Followers, MyUser, PasswordReset
 from django.db.models import Q
 import json
+import random
+
+# from utils import send_otp
 
 
 User = get_user_model()
@@ -70,7 +73,7 @@ class VerifyEmailView(APIView):
                     return Response({"error": "user already verified"}, status=status.HTTP_400_BAD_REQUEST)
 
             except User.DoesNotExist:
-                return Response({"error": "User does't exist"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"error": "User doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
         except:
             return Response({"error": "Invalid Token"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -113,9 +116,9 @@ class StoreUserDetails(APIView):
 class RetrieveUserProfile(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request, user_id):
         try:
-            user = request.user
+            user = User.objects.get(id=user_id)
             user_profile = UserProfile.objects.filter(user=user).first()
             # user_preferences = UserPreferences.objects.filter(
             #     user=user).first()
@@ -227,3 +230,66 @@ class FollowUserView(APIView):
 
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ResetPasswordView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({"message": "Email Required"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(email=email)
+
+            otp_instance = PasswordReset.objects.filter(
+                email=email).first()
+
+            if otp_instance:
+                otp_instance.otp = ''.join(random.choices('0123456789', k=6))
+                otp_instance.save()
+                print(otp_instance.otp)
+            else:
+                otp = ''.join(random.choices('0123456789', k=6))
+                otp_instance = PasswordReset(email=email, otp=otp)
+                otp_instance.save()
+                print(otp)
+
+        except User.DoesNotExist:
+            return Response({"message": "Enter a valid email address"}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response({"message": "success"})
+
+    def put(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        confirm_password = request.data.get('confirm_password')
+
+        if password != confirm_password:
+            return Response({"message": "Password doesn't match"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+            user.set_password(password)
+            user.save()
+            return Response({"message": "Password Changed"}, status=status.HTTP_200_OK)
+
+        except User.DoesNotExist:
+            return Response({"message": "User not found"})
+
+        return Response({"message": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class VerifyOTP(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        enterd_otp = request.data.get('otp')
+        try:
+
+            otp = PasswordReset.objects.get(email=email, otp=enterd_otp)
+
+            if str(otp.otp) == str(enterd_otp):
+                return Response({"message": "OTP Verified"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "OTP not valid"}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)

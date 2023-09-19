@@ -80,6 +80,10 @@ const Match = () => {
     }
   };
 
+  const showProfile = (user_id) => {
+    navigate("/profile", { state: { user_id } });
+  };
+
   return (
     <>
       <Navbar />
@@ -92,7 +96,10 @@ const Match = () => {
               userData?.map((item) => {
                 return (
                   <div className="col-md-3 mb-3">
-                    <div className="image-container">
+                    <div
+                      className="image-container"
+                      onClick={() => showProfile(item?.id)}
+                    >
                       <p className="person-name">{item?.name}</p>
                       <p className="person-location">{item?.location}</p>
                       <img

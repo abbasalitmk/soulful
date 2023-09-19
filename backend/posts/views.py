@@ -61,6 +61,23 @@ class CreatePostView (APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors)
 
+    def put(self, request):
+        id = request.data.get('id')
+        try:
+            post = Post.objects.get(pk=id)
+            print(post.image)
+
+        except Post.DoesNotExist:
+            return Response({"message": "Post doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = PostSerializer(
+            post, data=request.data, context={'request': request}, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            print(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class PostLikeView(APIView):
     permission_classes = [IsAuthenticated]

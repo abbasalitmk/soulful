@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect } from "react";
-import axios from 'axios'
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import jwt_decode from "jwt-decode";
 import { setToken, setUser } from "../features/auth/authSlice";
@@ -7,58 +7,55 @@ import { setToken, setUser } from "../features/auth/authSlice";
 const RefreshTokenContext = createContext();
 
 const RefreshTokenProvider = ({ children }) => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const currentToken = useSelector((state) => state.auth.token)
+  const currentToken = useSelector((state) => state.auth.token);
 
+  useEffect(() => {
+    const currentRefreshToken = currentToken?.refresh;
+    console.log(currentToken);
+    const refreshTokenInterval = 1000 * 60 * 50;
 
-    useEffect(() => {
+    if (currentToken) {
+      const updateToken = async () => {
+        try {
+          const response = await axios.post(
+            "http://127.0.0.1:8000/api/token/refresh/",
+            {
+              refresh: currentRefreshToken,
+            }
+          );
 
-        const currentRefreshToken = currentToken?.refresh
-        console.log(currentToken);
-        const refreshTokenInterval = 1000 * 60 * 13
+          if (response.status === 200) {
+            const newToken = response.data;
+            console.log(newToken);
+            const user = jwt_decode(newToken.access);
 
-
-        if (currentToken) {
-            const updateToken = async () => {
-                try {
-                    const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', {
-                        "refresh": currentRefreshToken
-                    });
-
-                    if (response.status === 200) {
-                        const newToken = response.data;
-                        console.log(newToken);
-                        const user = jwt_decode(newToken.access);
-
-                        dispatch(setToken(newToken));
-                        dispatch(setUser(user));
-                        console.log(newToken);
-                        localStorage.setItem('access', JSON.stringify(newToken));
-                        localStorage.setItem('user', JSON.stringify(user));
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
-            };
-            const intervalId = setInterval(updateToken, refreshTokenInterval);
-
-            return () => {
-                clearInterval(intervalId);
-            };
+            dispatch(setToken(newToken));
+            dispatch(setUser(user));
+            console.log(newToken);
+            localStorage.setItem("access", JSON.stringify(newToken));
+            localStorage.setItem("user", JSON.stringify(user));
+          }
+        } catch (error) {
+          console.log(error);
         }
-        else {
-            console.log('token not found');
-        }
+      };
+      const intervalId = setInterval(updateToken, refreshTokenInterval);
 
+      return () => {
+        clearInterval(intervalId);
+      };
+    } else {
+      console.log("token not found");
+    }
+  }, [currentToken, dispatch]);
 
-    }, [currentToken, dispatch]);
-
-    return (
-        <RefreshTokenContext.Provider value={{}}>
-            {children}
-        </RefreshTokenContext.Provider>
-    );
+  return (
+    <RefreshTokenContext.Provider value={{}}>
+      {children}
+    </RefreshTokenContext.Provider>
+  );
 };
 
 export const useRefreshToken = () => useContext(RefreshTokenContext);

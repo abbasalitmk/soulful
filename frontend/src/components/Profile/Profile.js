@@ -17,7 +17,7 @@ import {
   FaTasks,
 } from "react-icons/fa";
 import { FcCamera } from "react-icons/fc";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const Profile = () => {
   const user = useSelector((state) => state.auth.user);
@@ -26,15 +26,27 @@ const Profile = () => {
   const [image, setImage] = useState();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  let user_id = user.user_id;
+
+  useEffect(() => {
+    const { state } = location;
+    if (state && state.user_id) {
+      user_id = state.user_id;
+    }
+  }, [location]);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://127.0.0.1:8000/user/profile/", {
-        headers: {
-          Authorization: `Bearer ${token.access}`,
-        },
-      });
+      const response = await axios.get(
+        `http://127.0.0.1:8000/user/profile/${user_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.access}`,
+          },
+        }
+      );
       if (response.status === 200) {
         setUserData(response.data);
       }
@@ -46,10 +58,10 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    // if (!user.profile_completed) {
-    //   toast.error("Your profile not completed");
-    //   navigate("/edit-profile");
-    // }
+    if (!user.profile_completed) {
+      toast.error("Your profile not completed");
+      navigate("/edit-profile");
+    }
 
     fetchData();
   }, []);

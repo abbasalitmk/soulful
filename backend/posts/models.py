@@ -23,6 +23,7 @@ class Post(models.Model):
     share_count = models.IntegerField(blank=True, null=True)
     image = models.ForeignKey(
         Image, on_delete=models.DO_NOTHING)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title

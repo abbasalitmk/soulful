@@ -35,6 +35,18 @@ class PostSerializer(serializers.ModelSerializer):
 
         return post
 
+    def update(self, instance, validated_data):
+
+        title = validated_data.get('title')
+        instance.title = title
+        if 'image' in validated_data:
+            image = validated_data.pop('image')
+            image_obj = Image.objects.create(image=image)
+            instance.image = image_obj
+
+        instance.save()
+        return instance
+
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:

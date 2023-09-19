@@ -5,6 +5,8 @@ import AxiosInstance from "../../AxiosInstance";
 import { useNavigate } from "react-router-dom";
 import config from "../../config";
 import { RotatingLines } from "react-loader-spinner";
+import { v4 } from "uuid";
+import axios from "axios";
 
 const ChatRoom = () => {
   const [chatLog, setChatLog] = useState([]);
@@ -12,13 +14,17 @@ const ChatRoom = () => {
   const [socket, setSocket] = useState(null);
   const user = useSelector((state) => state.auth.user);
   const [followers, setFollowers] = useState(null);
-  const axios = AxiosInstance();
+  const Axios = AxiosInstance();
   const navigate = useNavigate();
   const [recipientId, setRecipientId] = useState(null);
   const [recipientName, setRecipientName] = useState(null);
   const sender_id = user.user_id;
-  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [textToTranslate, setTextToTranslate] = useState(null);
+  const [translate, setTranslate] = useState(null);
+
+  const AZURE_KEY = process.env.AZURE_KEY;
+  const AZURE_LOCATION = process.env.AZURE_LOCATION;
 
   useEffect(() => {
     // Create a WebSocket connection when the component mounts
@@ -39,19 +45,12 @@ const ChatRoom = () => {
         message,
         profile_pic,
       } = JSON.parse(e.data);
-      console.log("Received message:", {
-        sender,
-        sender_name,
-        receiver,
-        receiver_name,
-        message,
-        profile_pic,
-      });
+
       setChatLog((prevLog) => [
         ...prevLog,
         { sender, sender_name, receiver, receiver_name, message },
       ]);
-      console.log(chatLog);
+      setTextToTranslate(message);
     };
 
     chatSocket.onclose = () => {
@@ -89,7 +88,7 @@ const ChatRoom = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/chat/followers/");
+      const response = await Axios.get("/chat/followers/");
       if (response.status === 200) {
         console.log(response.data);
         setFollowers(response.data);
@@ -113,7 +112,7 @@ const ChatRoom = () => {
     try {
       setLoading(true);
       console.log(user.user_id, recipientId);
-      const response = await axios.get(
+      const response = await Axios.get(
         `chat/messages/${user.user_id}/${recipientId}`
       );
 
@@ -134,6 +133,49 @@ const ChatRoom = () => {
     setChatLog([]);
     fetchMessages();
   }, [recipientId]);
+
+  useEffect(() => {
+    const aa = chatLog && chatLog.map((log) => log.message);
+    console.log(aa);
+    const key = AZURE_KEY;
+    const endpoint = "https://api.cognitive.microsofttranslator.com/";
+    const location = AZURE_LOCATION;
+
+    const translateText = async () => {
+      try {
+        const response = await axios.post(
+          `${endpoint}/translate`,
+          [
+            {
+              text: textToTranslate,
+            },
+          ],
+          {
+            headers: {
+              "Ocp-Apim-Subscription-Key": key,
+              "Ocp-Apim-Subscription-Region": location, // Location required if using a multi-service or regional resource.
+              "Content-type": "application/json",
+              "X-ClientTraceId": v4().toString(),
+            },
+            params: {
+              "api-version": "3.0",
+              from: "en",
+              to: "ml",
+            },
+            responseType: "json",
+          }
+        );
+        const translatedMessage = {
+          translate: response.data[0].translations[0].text,
+        };
+
+        setChatLog((prevChatLog) => [...prevChatLog, translatedMessage]);
+      } catch (error) {
+        console.error(error.response);
+      }
+    };
+    translateText();
+  }, [textToTranslate]);
 
   return (
     <div className="col-md-12">
@@ -222,6 +264,7 @@ const ChatRoom = () => {
                             className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
                             width="60"
                           />
+
                           <div className="card">
                             <div className="card-header d-flex justify-content-between p-2">
                               <p className="fw-bold mb-0">{log.sender_name}</p>
@@ -231,7 +274,14 @@ const ChatRoom = () => {
                               </p>
                             </div>
                             <div className="card-body">
-                              <p className="mb-0">{log.message}</p>
+                              <p className="mb-0 d-flex justify-content-between">
+                                {log.message}
+                              </p>
+                              {log.translate && (
+                                <p className="mb-0 text-center">
+                                  Translated : {log.translate}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </li>

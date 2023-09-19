@@ -107,3 +107,9 @@ class Followers(models.Model):
 
     def __str__(self):
         return self.followed_user
+
+
+class PasswordReset(models.Model):
+    email = models.EmailField(unique=True)
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)

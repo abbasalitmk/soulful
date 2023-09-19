@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import moment from "moment";
 import Modal from "react-bootstrap/Modal";
 import AxiosInstance from "../../AxiosInstance";
+import EditPost from "./EditPost";
 
 const Posts = () => {
   const token = useSelector((state) => state.auth.token);
@@ -34,6 +35,9 @@ const Posts = () => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState(null);
   const [postId, setPostId] = useState(null);
+  const [editPostTitle, setEditPostTitle] = useState(null);
+  const [editPost, setEditPost] = useState(false);
+  const [postImage, setPostImage] = useState(null);
   const Axios = AxiosInstance();
 
   const fetchData = async () => {
@@ -244,8 +248,39 @@ const Posts = () => {
     }
   };
 
+  const editPostHandler = (postId, title, image) => {
+    setPostId(postId);
+    setEditPostTitle(title);
+    setPostImage(image);
+    setEditPost(true);
+  };
+
+  const closeEditPostModal = () => {
+    setEditPost(false);
+  };
+
+  // Update the post list for edited post component
+
+  const updatePostList = (updatedPost) => {
+    setData((prevData) =>
+      prevData.map((post) => (post.id === updatedPost.id ? updatedPost : post))
+    );
+  };
+
   return (
     <div className="col-md-6 offset-md-3">
+      {/* edit post component loading here */}
+      {editPost && (
+        <EditPost
+          postId={postId}
+          title={editPostTitle}
+          image={postImage}
+          id={postId}
+          closeModal={closeEditPostModal}
+          fetchData={fetchData}
+        />
+      )}
+
       <div className="new-post mb-3">
         <p className="text-center">
           {loading ? (
@@ -358,12 +393,15 @@ const Posts = () => {
                         <BiMenu size={"1.6em"} />
                       </button>
                       <ul className="dropdown-menu">
-                        <li className="dropdown-item">
-                          <Link className="text-decoration-none">
-                            <BiEdit size={"1.3em"} className="me-2 " />
-                            Edit
-                          </Link>
-                        </li>
+                        <Link
+                          onClick={() =>
+                            editPostHandler(item.id, item.title, item.image)
+                          }
+                          className="dropdown-item text-decoration-none"
+                        >
+                          <BiEdit size={"1.3em"} className="me-2 " />
+                          Edit
+                        </Link>
                         <Link
                           onClick={() => deletePost(item.id)}
                           className="dropdown-item text-decoration-none"

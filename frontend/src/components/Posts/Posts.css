@@ -12,10 +12,11 @@
     text-align:center;  
 }
 
-.post-image{
-    margin-top:.5rem;
-    width: 100%;
-
+.post-image {
+  margin-top: 0.5rem;
+  width: 100%;
+  max-height: 75vh;
+  object-fit: cover;
 }
 .image-preview{
     max-width: 20vw;

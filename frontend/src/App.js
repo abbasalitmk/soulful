@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -12,10 +12,9 @@ import Logout from "./utils/Logout";
 import EditProfile from "./components/Register/EditProfile";
 import ProfilePage from "./pages/ProfilePage";
 import Match from "./components/Match/Match";
-import ChatRoom from "./components/Chat/ChatRoom";
-import Followers from "./components/Chat/Followers";
 import ChatPage from "./pages/ChatPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import Dashboard from "./components/Dashboard/Dashboard";
 
 function App() {
   return (
@@ -27,7 +26,6 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
-          <Route path="/followers" element={<Followers />} />
 
           <Route
             path="/email-verification"
@@ -36,6 +34,7 @@ function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/meet" element={<ChatPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
 
           <Route element={<PrivateRoute />}>
             <Route path="/match" element={<Match />} />
