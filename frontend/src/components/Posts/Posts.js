@@ -406,7 +406,6 @@ const Posts = () => {
                           onClick={() => deletePost(item.id)}
                           className="dropdown-item text-decoration-none"
                         >
-                          {" "}
                           <BiTrash size={"1.3em"} className="me-2" />
                           Delete
                         </Link>

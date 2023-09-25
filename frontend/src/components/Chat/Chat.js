@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import AxiosInstance from "../../AxiosInstance";
 
 function Chat({ user, receiver }) {
   const [messages, setMessages] = useState([]);
@@ -8,9 +9,15 @@ function Chat({ user, receiver }) {
   const [chatSocket, setChatSocket] = useState(null); // Declare chatSocket
   const token = useSelector((state) => state.auth.token);
   const user_id = user.user_id;
+  const Axios = AxiosInstance();
 
   const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
   const wsUrl = `${wsProtocol}://127.0.0.1:8000/ws/chat/${user_id}/`;
+
+  // Log isPrime whenever it changes
+  useEffect(() => {
+    console.log("is_prime", isPrime);
+  }, [isPrime]);
 
   useEffect(() => {
     // Establish a WebSocket connection when the component mounts

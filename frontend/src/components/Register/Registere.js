@@ -19,18 +19,23 @@ const Register = () => {
   const [confirm_password, setConfirmPassword] = useState(null);
   const token = useSelector((state) => state.auth.token);
   const [loading, setLoading] = useState(false);
+  const regex = /^[a-zA-Z0-9\s]*$/;
 
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!regex.test(name)) {
+      toast.error("Special characters not allowed in name field");
+      return;
+    }
+
     const formData = {
       name,
       email,
       password,
       confirm_password,
     };
-
-    e.preventDefault();
 
     try {
       setLoading(true);

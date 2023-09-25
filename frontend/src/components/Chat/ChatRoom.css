@@ -1,6 +1,7 @@
 .chat-container{
     max-height: 80vh;
     overflow-x: auto;
+    box-shadow: 0px 0 3px #8a8989;
 }
 .followers-avatar{
     width: 60px;
@@ -10,4 +11,43 @@
 
 .list-unstyled{
     background-color: #fff;
+}   
+
+
+.followers-container{
+    box-shadow: 0px 0 3px #8a8989;
 }
+
+
+#chat2 .form-control {
+    border-color: transparent;
+}
+
+#chat2 .form-control:focus {
+    border-color: transparent;
+    box-shadow: inset 0px 0px 0px 1px transparent;
+}
+
+.divider:after,
+.divider:before {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #eee;
+}
+
+#chat2 .card-body {
+    position: relative;
+    height: 60px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+#chat2 {
+    max-height: 80vh;
+}
+
+#chat2 .card-footer {
+    padding-bottom: 60px;
+}
+

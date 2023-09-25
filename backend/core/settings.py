@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'users',
     'posts',
     'stories',
+    'match',
+    'subscription'
 
 
 ]
@@ -209,5 +211,18 @@ CHANNEL_LAYERS = {
 }
 
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 3600
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+# Configure Celery to use Django's settings module
+# CELERY_IMPORTS = ('subscription.tasks',)
+
+
+# razorpay configuration
+RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
+
+RAZORPAY_API_SECRET = os.getenv('RAZORPAY_API_SECRET')

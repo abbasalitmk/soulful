@@ -15,6 +15,7 @@ import Match from "./components/Match/Match";
 import ChatPage from "./pages/ChatPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import Dashboard from "./components/Dashboard/Dashboard";
+import Subscription from "./components/Subscription/Subscription";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/meet" element={<ChatPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/subscription" element={<Subscription />} />
 
           <Route element={<PrivateRoute />}>
             <Route path="/match" element={<Match />} />
