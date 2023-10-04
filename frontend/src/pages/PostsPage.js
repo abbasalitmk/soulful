@@ -8,10 +8,12 @@ const PostsPage = () => {
   return (
     <Fragment>
       <Navbar />
-      <div className="row" style={{ backgroundColor: "#f0f2f5" }}>
-        <Sidebar />
-        <Posts />
-        <Suggested />
+      <div className="container">
+        <div className="row" style={{ backgroundColor: "#f0f2f5" }}>
+          <Sidebar />
+          <Posts />
+          {/* <Suggested /> */}
+        </div>
       </div>
     </Fragment>
   );

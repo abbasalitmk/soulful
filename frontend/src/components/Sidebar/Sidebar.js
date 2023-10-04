@@ -18,29 +18,29 @@ const Sidebar = (props) => {
   };
 
   return (
-    <div className="col-3 sidebar-container">
+    <div className="col-3 sidebar-container d-none d-lg-block d-xl-block">
       <div className="">
         <ul>
           <li>
-            <Link style={linkStyle}>
+            <Link to="/" style={linkStyle}>
               <BsFillHouseDoorFill style={iconStyle} />
               Home
             </Link>
           </li>
           <li>
-            <Link style={linkStyle}>
+            <Link to="/notification" style={linkStyle}>
               <BsFillBellFill style={iconStyle} />
               Notifications
             </Link>
           </li>
           <li>
-            <Link style={linkStyle}>
+            <Link to="/meet" style={linkStyle}>
               <BsMessenger style={iconStyle} />
               Messages
             </Link>
           </li>
           <li>
-            <Link style={linkStyle}>
+            <Link to="/profile" style={linkStyle}>
               <BsPersonLinesFill style={iconStyle} />
               Profile
             </Link>

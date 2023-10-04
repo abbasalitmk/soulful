@@ -10,4 +10,4 @@ User = get_user_model()
 @receiver(post_save, sender=User)
 def send_verification_email(sender, instance, created, **kwargs):
     if created:
-        send_verification_email(instance)
+        send_verification_mail(instance)

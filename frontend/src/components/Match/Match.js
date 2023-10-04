@@ -3,12 +3,13 @@ import pic from "../../assets/avatar.jpeg";
 import Navbar from "../Navbar/Navbar";
 import Sidebar from "../Sidebar/Sidebar";
 import "./Match.css";
-import { BsHeartFill, BsFillHeartbreakFill } from "react-icons/bs";
+import { BsHeartFill, BsFillHeartbreakFill, BsMessenger } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../../config";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import AxiosInstance from "../../AxiosInstance";
 
 const Match = () => {
   const token = useSelector((state) => state.auth.token);
@@ -16,6 +17,27 @@ const Match = () => {
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
+  const [profileCompleted, setProfileCompleted] = useState(false);
+  const Axios = AxiosInstance();
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const checkProfileCompleted = async () => {
+      try {
+        const response = await Axios.get("user/edit-profile/");
+        if (response.status === 200) {
+          if (!response.data.profile_completed) {
+            console.log(response.data.profile_completed);
+            toast.error("Your profile not completed");
+            navigate("/edit-profile");
+          }
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    };
+    checkProfileCompleted();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -30,6 +52,7 @@ const Match = () => {
       );
       if (response.status === 200) {
         setUserData(response.data);
+        toast.success("rendering");
       }
     } catch (error) {
       console.log(error.response.data);
@@ -47,15 +70,22 @@ const Match = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    console.log(userData);
-  }, [userData]);
+  const handleSearch = async () => {
+    try {
+      const response = await Axios.get(`user/all-users?query=${search}`);
+      if (response.status === 200) {
+        setUserData(response.data);
+      }
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
 
   const userFollowingHandler = async (user_id) => {
     try {
       console.log(token.access);
       const response = await axios.post(
-        `http://127.0.0.1:8000/user/follow/${user_id}`,
+        `http://127.0.0.1:8000/match/follow-request/${user_id}`,
         {},
         {
           headers: {
@@ -63,8 +93,8 @@ const Match = () => {
           },
         }
       );
-      if (response.status === 201) {
-        toast.success("Your are Followed");
+      if (response.status === 200) {
+        toast.success("Friend Request sent");
         console.log(response.data);
         fetchData();
       } else if (response.status === 202) {
@@ -90,31 +120,56 @@ const Match = () => {
 
       <div className="container">
         <Sidebar />
+
         <div className="col-md-9 offset-md-3 p-4">
           <div className="row">
+            <div className="search-bar mb-4">
+              <div class="input-group w-50 mx-auto">
+                <input
+                  type="text"
+                  class="form-control"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  onClick={handleSearch}
+                >
+                  Search
+                </button>
+              </div>
+            </div>
             {userData && userData.length > 0 ? (
               userData?.map((item) => {
                 return (
                   <div className="col-md-3 mb-3">
-                    <div
-                      className="image-container"
-                      onClick={() => showProfile(item?.id)}
-                    >
+                    <div className="image-container">
                       <p className="person-name">{item?.name}</p>
                       <p className="person-location">{item?.location}</p>
                       <img
                         src={item.image ? config.media_url + item?.image : pic}
                         alt=""
+                        onClick={() => showProfile(item?.id)}
                       />
-                      {item?.follow ? (
+                      {item?.request_pending ? (
                         <>
-                          <button
+                          <button className="btn btn-warning requested_button">
+                            Request Sent
+                          </button>
+                          {/* <button
                             onClick={() => userFollowingHandler(item.id)}
                             className="follow-button if_followed"
                           >
                             <BsFillHeartbreakFill size={"1.3em"} />
-                          </button>
+                          </button> */}
                         </>
+                      ) : item?.request_accepted ? (
+                        <Link to="/meet">
+                          <button className="follow-button if_followed">
+                            <BsMessenger size={"1.4em"} />
+                          </button>
+                        </Link>
                       ) : (
                         <button
                           onClick={() => userFollowingHandler(item.id)}

@@ -39,11 +39,6 @@ const Suggested = () => {
   };
 
   useEffect(() => {
-    // if (userObj.profile_completed !== true) {
-    //   toast.error("Your profile not completed");
-    //   navigate("/edit-profile");
-    // }
-
     fetchData();
   }, []);
 
@@ -52,32 +47,34 @@ const Suggested = () => {
   }, [userData]);
 
   return (
-    <>
-      <div className="col-md-3">
+    <div className="suggested-scroll-container d-none d-lg-block d-xl-block">
+      <div className="col-md-12">
         <div className="row m-3">
-          <h5 className="mt-3 ">Suggested Matchs </h5>
+          <h5 className="mt-3">Suggested Matches</h5>
 
-          {userData && userData.length > 0 ? (
-            userData?.map((item) => {
-              return (
-                <div className="col-md-6 mb-3">
-                  <div className="suggested-image-container">
-                    <p className="person-name">{item?.name}</p>
-                    <p className="person-location">{item?.location}</p>
-                    <img
-                      src={item.image ? config.media_url + item?.image : pic}
-                      alt=""
-                    />
+          <div className="suggested-matches">
+            {userData && userData.length > 0 ? (
+              userData?.map((item) => {
+                return (
+                  <div className="col-md-3 mb-3">
+                    <div className="suggested-image-container">
+                      <p className="person-name">{item?.name}</p>
+                      <p className="person-location">{item?.location}</p>
+                      <img
+                        src={item.image ? config.media_url + item?.image : pic}
+                        alt=""
+                      />
+                    </div>
                   </div>
-                </div>
-              );
-            })
-          ) : (
-            <p>No user data available.</p>
-          )}
+                );
+              })
+            ) : (
+              <p>No user data available.</p>
+            )}
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import config from "../../config";
 import moment from "moment";
 
-const ContentManamentment = () => {
+const Content = () => {
   const Axios = AxiosInstance();
   const [postData, setPostData] = useState(null);
   const [nextPageUrl, setNextPageUrl] = useState(null);
@@ -69,8 +69,8 @@ const ContentManamentment = () => {
 
   return (
     <>
-      <div className="col-md-9 mt-3 offset-md-3">
-        <h5>Post Management</h5>
+      <div className="col-md-9 offset-md-3">
+        <h4 className="text-center mb-2">Post Management</h4>
         <div className="db-user-list text-center ">
           <table className="table table-striped">
             <thead>
@@ -166,4 +166,4 @@ const ContentManamentment = () => {
     </>
   );
 };
-export default ContentManamentment;
+export default Content;

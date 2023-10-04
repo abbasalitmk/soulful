@@ -19,7 +19,7 @@ const Sidebar = (props) => {
   };
 
   return (
-    <div className="col-md-3 sidebar-container">
+    <div className="col-md-3 sidebar-container d-none d-lg-block d-xl-block">
       <div className="">
         <ul>
           <li>

@@ -1,10 +1,8 @@
 {
   "[python]": {
-    "editor.defaultFormatter": "ms-python.autopep8"
+    "editor.defaultFormatter": "ms-python.black-formatter"
   },
   "python.formatting.provider": "none",
   "editor.insertSpaces": true,
-  "editor.tabSize": 4,
-  
-
+  "editor.tabSize": 4
 }

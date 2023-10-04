@@ -22,6 +22,7 @@ from .models import UserProfile, UserPreferences, Images, Followers, MyUser, Pas
 from django.db.models import Q
 import json
 import random
+from match.models import FollowRequest
 
 # from utils import send_otp
 
@@ -112,6 +113,18 @@ class StoreUserDetails(APIView):
 
         return Response({'user_details': user_details_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+    # for checking user profile completed
+
+    def get(self, request):
+        try:
+            user_id = request.user
+            user = User.objects.get(id=user_id.pk)
+            profile_completed = user.profile_completed
+
+            return Response({"profile_completed": profile_completed}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class RetrieveUserProfile(APIView):
     permission_classes = [IsAuthenticated]
@@ -156,6 +169,13 @@ class RetrieveAllUsersView(APIView):
 
     def get(self, request):
         try:
+            query = request.query_params.get('query', None)
+
+            if query:
+                user_matching_query = Q(first_name__icontains=query)
+            else:
+                user_matching_query = Q(gender__in=['male', 'female'])
+
             user_profile = UserProfile.objects.get(user=request.user)
             place = user_profile.place
             age = user_profile.dob
@@ -174,7 +194,6 @@ class RetrieveAllUsersView(APIView):
             default_matching_query = ~Q(gender=user_profile.gender) & (Q(
                 place__iexact=place) | Q(skinColor__iexact=skin) | Q(hairColor__iexact=hair))
 
-            user_matching_query = Q(gender__in=['male', 'female'])
             # user_matching_query = None
 
             matching_query = default_matching_query if user_matching_query is None else user_matching_query
@@ -193,15 +212,26 @@ class RetrieveAllUsersView(APIView):
                     profile_picture) if profile_picture else None
 
                 # check user folllowed the current profile
-                follow_status = Followers.objects.filter(
-                    user=request.user, followed_user=user.user).exists()
+                follow_status = FollowRequest.objects.filter(
+                    sender=request.user, reciever=user.user, accepted=False).exists()
+
+                # check sender and reciver already followed.
+                sender = request.user
+                reciever = user.user
+
+                if sender.pk < reciever.pk:
+                    sender, reciever = reciever, sender
+
+                request_accepted = Followers.objects.filter(
+                    user=reciever, followed_user=sender).exists()
 
                 user_data.append({
                     'id': user_profile_serializer.data['user'],
                     'name': user_profile_serializer.data['first_name'],
                     'location': user_profile_serializer.data['place'],
                     'image': picture_serlializer.data['image'] if picture_serlializer else None,
-                    'follow': follow_status
+                    'request_pending': follow_status,
+                    'request_accepted': request_accepted
                 })
             return Response(user_data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -233,6 +263,13 @@ class FollowUserView(APIView):
 
 
 class ResetPasswordView(APIView):
+    def send_otp_mail(request, email, otp):
+        subject = 'OTP'
+        message = f'Your one time password is : {otp}'
+        from_email = 'soulfulapp@gmail.com'
+        recipient_list = ['abbasalitmk@gmail.com']
+        send_mail(subject, message, from_email, recipient_list)
+
     def post(self, request):
         email = request.data.get('email')
         if not email:

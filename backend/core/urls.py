@@ -19,7 +19,8 @@ urlpatterns = [
 
     path("chat/", include("chat.urls")),
     path('db/', include("dashboard.urls")),
-    path('subscription/', include('subscription.urls'))
+    path('subscription/', include('subscription.urls')),
+    path('match/', include('match.urls'))
 ]
 
 if settings.DEBUG:

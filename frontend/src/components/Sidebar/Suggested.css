@@ -4,7 +4,7 @@
     display: inline-block;
     width: 100%;
     object-fit: cover;
-    max-height: 23vh;
+    height: 220px;
     overflow: hidden;
     transition: transform 0.3s;
     border-radius: 5px;
@@ -30,6 +30,20 @@
     white-space: nowrap;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
+.suggested-scroll-container {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+        /* Enable touch scrolling for iOS devices */
+    overscroll-behavior: contain;
+    cursor: grab
+}
+
+.suggested-matches {
+    display: inline-flex;
+    gap: 20px;
+    /* Adjust the gap as needed */
+}
 
 
 .person-location {
@@ -47,6 +61,6 @@
 }
 .suggested-image-container img{
     width: 100%;
-    height: 40vh;
+    height: 220px;
     object-fit: cover;
 }

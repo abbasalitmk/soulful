@@ -1,14 +1,14 @@
 import "./Dashboard.css";
-import ContentManamentment from "./ContentManagement";
 import Sidebar from "./Sidebar/Sidebar";
 import UserManagement from "./UserManagement";
+import Membership from "./Membership";
 
 const Dashboard = () => {
   return (
     <>
       <div className="row">
         <Sidebar />
-        <ContentManamentment />
+        <Membership />
       </div>
     </>
   );

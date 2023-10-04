@@ -33,6 +33,7 @@ const Step3 = ({ data, setData }) => {
             id="skin-color"
             value={data.skinColor}
           >
+            <option>Skin Color</option>
             <option value="Fair">Fair</option>
             <option value="Light">Light</option>
             <option value="Medium">Medium</option>
@@ -52,6 +53,7 @@ const Step3 = ({ data, setData }) => {
             id="hair-color"
             value={data.hairColor}
           >
+            <option>Hair Color</option>
             <option value="Black">Black</option>
             <option value="Brown">Brown</option>
             <option value="Blonde">Blonde</option>

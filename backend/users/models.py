@@ -106,7 +106,7 @@ class Followers(models.Model):
         unique_together = ('user', 'followed_user')
 
     def __str__(self):
-        return self.followed_user
+        return f"{self.user} follows {self.followed_user}"
 
 
 class PasswordReset(models.Model):

@@ -12,6 +12,8 @@ from posts.views import GetAllPostView
 from posts.models import Post
 from posts.serializers import PostRetrieveSerilizer
 from users.serializer import UserProfileSerializer
+from subscription.models import Membership
+from subscription.serializer import SubscriptionSerializer
 
 
 User = get_user_model()
@@ -104,3 +106,19 @@ class RetrieveAllPostsView(APIView):
         except Post.DoesNotExist:
             return Response({"message": "No post found"}, status=status.HTTP_404_NOT_FOUND)
         return Response({"message": "something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class SubscriptionsView(APIView):
+    pagination_class = PageNumberPagination
+
+    def get(self, request):
+        paginator = self.pagination_class()
+        try:
+            membership = Membership.objects.all()
+            serializer = SubscriptionSerializer(membership, many=True)
+            paginated_post = paginator.paginate_queryset(
+                serializer.data, request)
+
+            return paginator.get_paginated_response(paginated_post)
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

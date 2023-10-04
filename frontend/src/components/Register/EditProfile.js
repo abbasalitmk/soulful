@@ -4,11 +4,13 @@ import Step2 from "./steps/Step2";
 import Step3 from "./steps/Step3";
 import Navbar from "../Navbar/Navbar";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import * as Yup from "yup";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import AxiosInstance from "../../AxiosInstance";
+import jwt_decode from "jwt-decode";
+import { setToken, setUser } from "../../features/auth/authSlice";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required("First Name is required"),
@@ -32,14 +34,28 @@ const validationSchema = Yup.object().shape({
 const EditProfile = () => {
   const Axios = AxiosInstance();
   const token = useSelector((state) => state.auth.token);
-  const user = useSelector((state) => state.auth.user);
+  const [user, setUser] = useState(useSelector((state) => state.auth.user));
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [profileCompleted, setProfileCompleted] = useState(false);
 
   useEffect(() => {
-    console.log(user);
-    if (user.profile_completed === true) {
-      navigate("/posts");
-    }
+    const checkProfileCompleted = async () => {
+      try {
+        const response = await Axios.get("user/edit-profile/");
+        if (response.status === 200) {
+          if (!response.data.profile_completed) {
+            console.log(response.data.profile_completed);
+            toast.error("Your profile not completed");
+            navigate("/edit-profile");
+          }
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    };
+    checkProfileCompleted();
   }, []);
 
   const initialState = {
@@ -113,17 +129,38 @@ const EditProfile = () => {
         }
       );
       if (response.status === 200) {
-        try {
-          const refreshToken = await Axios.post("/api/token/refresh/", {
-            refresh: token.refresh,
-          });
-          console.log(refreshToken);
-          if (refreshToken.status === 200) {
-            console.log("refresh", refreshToken);
-          }
-        } catch (error) {
-          console.log(error.response);
+        const userKey = "user";
+        const storedUserJSON = localStorage.getItem(userKey);
+
+        if (storedUserJSON) {
+          const storedUser = JSON.parse(storedUserJSON);
+
+          storedUser.profile_completed = true;
+
+          localStorage.setItem(userKey, JSON.stringify(storedUser));
         }
+
+        setUser(JSON.parse(localStorage.getItem(user)));
+
+        // try {
+        //   const token = await Axios.post("/api/token/refresh/", {
+        //     refresh: token.refresh,
+        //   });
+        //   console.log(token);
+        //   if (token.status === 200) {
+        //     const user = jwt_decode(token.access);
+        //     setUserData(user);
+        //     const tokenData = token.data;
+        //     dispatch(setToken(tokenData));
+        //     dispatch(setUser(user));
+        //     localStorage.setItem("access", JSON.stringify(tokenData));
+        //     localStorage.setItem("user", JSON.stringify(user));
+
+        //     console.log("refresh", token);
+        //   }
+        // } catch (error) {
+        //   console.log(error.response);
+        // }
 
         navigate("/profile");
         toast.success("Profile updated!");

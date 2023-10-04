@@ -78,10 +78,10 @@ const Register = () => {
   return (
     <div className="container mt-4">
       <div className="row">
-        <div className="col-md-6 col-sm-12 col-xs-12">
+        <div className="col-md-6 col-lg-6 col-xl-6 d-none d-md-block d-lg-block d-xl-block mt-5">
           <img className="background" src={background} alt="" />
         </div>
-        <div className="col-md-6 col-sm-12 col-xs-12 mx-auto">
+        <div className="col-md-6 col-lg-6 col-xl-6 mx-auto">
           <div className="login-container ">
             <form onSubmit={handleSubmit}>
               <div className="mb-2">

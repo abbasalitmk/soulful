@@ -16,6 +16,12 @@ import ChatPage from "./pages/ChatPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Subscription from "./components/Subscription/Subscription";
+import AdminRoute from "./utils/AdminRoute";
+import ContentPage from "./pages/Dashboard/ContentPage";
+import SubscriptionPage from "./pages/Dashboard/SubscriptionPage";
+import UserPage from "./pages/Dashboard/UserPage";
+import Notification from "./components/Notification/Notification";
+import { WebsocketProvider } from "./context/WebsocketContext";
 
 function App() {
   return (
@@ -32,18 +38,32 @@ function App() {
             path="/email-verification"
             element={<EmailVerificationPage />}
           />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/meet" element={<ChatPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/subscription" element={<Subscription />} />
 
+          <Route path="/logout" element={<Logout />} />
+
+          {/* prevent unauthorized access  */}
           <Route element={<PrivateRoute />}>
+            <Route path="/meet" element={<ChatPage />} />
+
+            <Route path="/subscription" element={<Subscription />} />
             <Route path="/match" element={<Match />} />
 
             <Route path="/posts" element={<PostsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/notification" element={<Notification />} />
+          </Route>
+
+          {/* prevent non admin access */}
+
+          <Route element={<AdminRoute />}>
+            <Route path="/dashboard/posts" element={<ContentPage />} />
+            <Route path="/dashboard/users" element={<UserPage />} />
+            <Route
+              path="/dashboard/subscribers"
+              element={<SubscriptionPage />}
+            />
           </Route>
         </Routes>
       </Router>

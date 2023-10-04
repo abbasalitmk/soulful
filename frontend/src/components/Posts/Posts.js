@@ -268,7 +268,7 @@ const Posts = () => {
   };
 
   return (
-    <div className="col-md-6 offset-md-3">
+    <div className="col-md-12 col-lg-9 col-xs-9 offset-md-3">
       {/* edit post component loading here */}
       {editPost && (
         <EditPost
@@ -361,9 +361,9 @@ const Posts = () => {
       {/* single post */}
       {data.map((item, index) => {
         return (
-          <div className="row mx-auto text-center">
+          <div className="row mx-auto text-center ">
             <div className="col post">
-              <div className="mt-2">
+              <div className="mt-2 m-3">
                 <div className="post-header d-flex justify-content-between">
                   <div className="post-owner d-flex justify-content-center text-center">
                     <img

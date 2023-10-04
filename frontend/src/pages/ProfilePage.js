@@ -1,6 +1,7 @@
 import Profile from "../components/Profile/Profile";
 import Navbar from "../components/Navbar/Navbar";
 import Sidebar from "../components/Profile/Sidebar/Sidebar";
+import Suggested from "../components/Sidebar/Suggested";
 
 const ProfilePage = () => {
   return (

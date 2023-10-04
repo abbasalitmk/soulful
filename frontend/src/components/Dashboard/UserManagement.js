@@ -4,6 +4,9 @@ import avatar from "../../assets/avatar.jpeg";
 import "./Dashboard.css";
 import { FaEyeSlash, FaRegHospital, FaEye } from "react-icons/fa6";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+
+import Navbar from "../Dashboard/Navbar";
 
 const UserManagement = () => {
   const Axios = AxiosInstance();
@@ -55,10 +58,22 @@ const UserManagement = () => {
     fetchUser(prevPageUrl);
   };
 
+  const HandleNewUser = () => {
+    console.log("button clicked");
+  };
+
+  const handleSearch = () => {};
+
   return (
     <>
-      <div className="col-md-9 mt-3 offset-md-3">
-        <h5>User Management</h5>
+      <Navbar
+        heading="User Management"
+        btn1="New User"
+        btn1Click={HandleNewUser}
+        onSearch={handleSearch}
+      />
+
+      <div className="col-md-9 offset-md-3">
         <div className="db-user-list text-center ">
           <table className="table table-striped">
             <thead>

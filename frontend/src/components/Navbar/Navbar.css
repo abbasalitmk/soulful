@@ -5,18 +5,25 @@
     z-index: 100;
     background-color: rgb(0, 0, 0);
 }
-.navbar{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 63px;
-    padding:0
-}
 
 .logo{
     width: 85px;
     
 }
+
+.navbar{
+    max-height: 50px;
+ 
+}
+
+@media (max-width: 768px) {
+    .navbar {
+     
+        max-height: 60px;
+        padding: 5px;
+    }
+}
+
 .navbar-links{
     list-style-type: none;
     display: flex;

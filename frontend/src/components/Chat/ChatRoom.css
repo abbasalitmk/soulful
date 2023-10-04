@@ -14,11 +14,6 @@
 }   
 
 
-.followers-container{
-    box-shadow: 0px 0 3px #8a8989;
-}
-
-
 #chat2 .form-control {
     border-color: transparent;
 }
@@ -51,3 +46,21 @@
     padding-bottom: 60px;
 }
 
+.followers-container{
+
+   max-height: 80vh;
+   overflow-y:scroll;
+ 
+}
+@media (max-width: 768px) {
+    .followers-container {
+        max-height: 100vh;
+    }
+    #chat2 {
+        max-height: 100vh;
+    }
+
+    #chat2 .card-footer {
+        padding-bottom: 10px;
+    }
+}

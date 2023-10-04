@@ -18,6 +18,8 @@ import {
 } from "react-icons/fa";
 import { FcCamera } from "react-icons/fc";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import Suggested from "../Sidebar/Suggested";
+import AxiosInstance from "../../AxiosInstance";
 
 const Profile = () => {
   const user = useSelector((state) => state.auth.user);
@@ -27,16 +29,22 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  let user_id = user.user_id;
+  const currentUserId = user.user_id;
+  const { state } = location;
+  const user_id = state?.user_id || currentUserId;
+  const [profileCompleted, setProfileCompleted] = useState(false);
+
+  const Axios = AxiosInstance();
 
   useEffect(() => {
-    const { state } = location;
-    if (state && state.user_id) {
-      user_id = state.user_id;
-    }
-  }, [location]);
+    console.log("currentUserId:", currentUserId);
+    console.log("user_id from state:", state?.user_id);
+    console.log("user_id used:", user_id);
 
-  const fetchData = async () => {
+    fetchData(user_id);
+  }, [location, currentUserId]);
+
+  const fetchData = async (user_id) => {
     try {
       setLoading(true);
       const response = await axios.get(
@@ -58,12 +66,21 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (!user.profile_completed) {
-      toast.error("Your profile not completed");
-      navigate("/edit-profile");
-    }
-
-    fetchData();
+    const checkProfileCompleted = async () => {
+      try {
+        const response = await Axios.get("user/edit-profile/");
+        if (response.status === 200) {
+          if (!response.data.profile_completed) {
+            console.log(response.data.profile_completed);
+            toast.error("Your profile not completed");
+            navigate("/edit-profile");
+          }
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    };
+    checkProfileCompleted();
   }, []);
 
   useEffect(() => {
@@ -132,24 +149,27 @@ const Profile = () => {
                     alt=""
                   />
                 )}
-                <div className="mb-3  text-center">
-                  <input
-                    className="form-control"
-                    type="file"
-                    accept="image/"
-                    id="file"
-                    name="image"
-                    onChange={imageUploadHandler}
-                    style={{ display: "none" }}
-                    loading="lazy"
-                  />
-                  <label for="file">
-                    <li className="me-2 btn btn-warning">
-                      <FcCamera size={"2em"} />
-                      Change Picture
-                    </li>
-                  </label>
-                </div>
+
+                {user_id === currentUserId && (
+                  <div className="mb-3  text-center">
+                    <input
+                      className="form-control"
+                      type="file"
+                      accept="image/"
+                      id="file"
+                      name="image"
+                      onChange={imageUploadHandler}
+                      style={{ display: "none" }}
+                      loading="lazy"
+                    />
+                    <label for="file">
+                      <li className="me-2 btn btn-warning">
+                        <FcCamera size={"2em"} />
+                        Change Picture
+                      </li>
+                    </label>
+                  </div>
+                )}
               </div>
             )}
             <div className="col-md-5 profile-details">
@@ -215,6 +235,7 @@ const Profile = () => {
               </div>
             )}
           </div>
+          <Suggested />
         </div>
       </div>
     </>

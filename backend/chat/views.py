@@ -7,13 +7,16 @@ from users.models import MyUser, Followers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
 
 
 class MessageView(APIView):
-
     def get(self, request):
         try:
-            followers = Followers.objects.filter(user=request.user)
+            followers = Followers.objects.filter(
+                Q(user=request.user) | Q(followed_user=request.user)
+            )
+
             serializer = RetrieveFollowedUserSerializer(followers, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -33,4 +36,4 @@ class RetrieveMessagesView(APIView):
             serializer = MessageSerializer(messages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'message': str(e)})
+            return Response({"message": str(e)})

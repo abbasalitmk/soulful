@@ -22,3 +22,19 @@
     font-size: 1rem;
     font-weight: bold;
 }
+
+
+@media (max-width: 768px) {
+    .login-container{
+        width: 100%;
+        margin-left:0 ;
+    }
+    
+}
+
+@media screen and (min-width: 768px) and (max-width: 1000px) {
+    .login-container {
+        width: 100%;
+        margin-left: 0;
+    }
+}

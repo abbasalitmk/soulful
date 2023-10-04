@@ -7,13 +7,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
-import { setToken, setUser } from "../../features/auth/authSlice";
+import { setToken, setUser, setAdmin } from "../../features/auth/authSlice";
 import jwt_decode from "jwt-decode";
 import toast from "react-hot-toast";
 import { InfinitySpin } from "react-loader-spinner";
 
 const Login = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const isAdmin = useSelector((state) => state.auth.isAdmin);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [email, setEmail] = useState(null);
@@ -23,15 +24,15 @@ const Login = () => {
 
   // const token = useSelector((state) => (state.auth.token))
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      if (!user.profile_completed) {
-        navigate("/edit-profile");
-      } else {
-        navigate("/match");
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     if (!user.profile_completed) {
+  //       navigate("/edit-profile");
+  //     } else {
+  //       navigate("/match");
+  //     }
+  //   }
+  // }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,7 +47,8 @@ const Login = () => {
       const user = jwt_decode(token.access);
 
       if (response.status === 200 && token) {
-        console.log("login");
+        console.log(user.is_admin);
+
         if (!user.is_verified) {
           toast.error("Your email not verified");
           navigate("/email-verification");
@@ -55,6 +57,7 @@ const Login = () => {
           dispatch(setUser(user));
           localStorage.setItem("access", JSON.stringify(token));
           localStorage.setItem("user", JSON.stringify(user));
+
           toast.error("Complete your profile");
           navigate("/edit-profile");
         } else {
@@ -62,7 +65,13 @@ const Login = () => {
           dispatch(setUser(user));
           localStorage.setItem("access", JSON.stringify(token));
           localStorage.setItem("user", JSON.stringify(user));
-          navigate("/posts");
+          dispatch(setAdmin(user.is_admin));
+
+          if (user.is_admin) {
+            navigate("/dashboard/posts");
+          } else {
+            navigate("/posts");
+          }
         }
       }
     } catch (error) {
@@ -77,10 +86,10 @@ const Login = () => {
   return (
     <div className="container mt-5">
       <div className="row">
-        <div className="col-md-6 col-sm-12 col-xs-12">
+        <div className="col-md-6 col-lg-6 col-xl-6 d-none d-md-block d-lg-block d-xl-block mt-5">
           <img className="background" src={background} alt="" />
         </div>
-        <div className="col-md-6 col-sm-12 col-xs-12 mx-auto">
+        <div className="col-md-6 col-lg-6 col-xs-6 mx-auto">
           <div className="login-container ">
             <form onSubmit={handleSubmit}>
               {loading && (

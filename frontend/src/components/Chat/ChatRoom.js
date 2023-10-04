@@ -24,32 +24,37 @@ const ChatRoom = () => {
   const sender_id = user.user_id;
   const [loading, setLoading] = useState(false);
   const [textToTranslate, setTextToTranslate] = useState(null);
-  const [translate, setTranslate] = useState(null);
+  const [translate, setTranslate] = useState(false);
+  const [language, setLanguage] = useState("ml");
+  const [lastChat, setLastChat] = useState(null);
+
   const [isPrime, setIsPrime] = useState("");
 
   const AZURE_KEY = process.env.REACT_APP_AZURE_KEY;
   const AZURE_LOCATION = process.env.AZURE_LOCATION;
   const chatContainerRef = useRef(null);
 
+  const checkPrime = async () => {
+    try {
+      const response = await Axios.get("/subscription/is-prime/");
+      if (response.status === 200) {
+        if (response.data.is_active !== true) {
+          toast.error("Please upgrade your account to access chat");
+          navigate("/subscription");
+        }
+      }
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
   // check is user prime member
   useEffect(() => {
-    const checkPrime = async () => {
-      try {
-        const response = await Axios.get("/subscription/is-prime/");
-        if (response.status === 200) {
-          setIsPrime(response.data.is_prime);
-        }
-      } catch (error) {
-        console.log(error.response);
-      }
-    };
-
     checkPrime();
   }, []);
 
   useEffect(() => {
-    console.log("is_prime", isPrime);
-  }, [isPrime]);
+    console.log(translate);
+  }, [translate]);
 
   useEffect(() => {
     // Create a WebSocket connection when the component mounts
@@ -182,50 +187,52 @@ const ChatRoom = () => {
   }, [recipientId]);
 
   useEffect(() => {
-    const aa = chatLog && chatLog.map((log) => log.message);
-    // console.log("key", process.env.REACT_APP_AZURE_KEY);
-    // const key = process.env.REACT_APP_AZURE_KEY;
-    const key = AZURE_KEY;
+    if (translate) {
+      const aa = chatLog && chatLog.map((log) => log.message);
+      // console.log("key", process.env.REACT_APP_AZURE_KEY);
+      // const key = process.env.REACT_APP_AZURE_KEY;
+      const key = AZURE_KEY;
 
-    const endpoint = "https://api.cognitive.microsofttranslator.com/";
-    // const location = process.env.REACT_APP_AZURE_LOCATION;
-    const location = "southeastasia";
+      const endpoint = "https://api.cognitive.microsofttranslator.com/";
+      // const location = process.env.REACT_APP_AZURE_LOCATION;
+      const location = "southeastasia";
 
-    const translateText = async () => {
-      try {
-        const response = await axios.post(
-          `${endpoint}/translate`,
-          [
+      const translateText = async () => {
+        try {
+          const response = await axios.post(
+            `${endpoint}/translate`,
+            [
+              {
+                text: textToTranslate,
+              },
+            ],
             {
-              text: textToTranslate,
-            },
-          ],
-          {
-            headers: {
-              "Ocp-Apim-Subscription-Key": key,
-              "Ocp-Apim-Subscription-Region": location, // Location required if using a multi-service or regional resource.
-              "Content-type": "application/json",
-              "X-ClientTraceId": v4().toString(),
-            },
-            params: {
-              "api-version": "3.0",
-              from: "en",
-              to: "ml",
-            },
-            responseType: "json",
-          }
-        );
-        const translatedMessage = {
-          translate: response.data[0].translations[0].text,
-        };
+              headers: {
+                "Ocp-Apim-Subscription-Key": key,
+                "Ocp-Apim-Subscription-Region": location, // Location required if using a multi-service or regional resource.
+                "Content-type": "application/json",
+                "X-ClientTraceId": v4().toString(),
+              },
+              params: {
+                "api-version": "3.0",
+                from: "en",
+                to: language,
+              },
+              responseType: "json",
+            }
+          );
+          const translatedMessage = {
+            translate: response.data[0].translations[0].text,
+          };
 
-        setChatLog((prevChatLog) => [...prevChatLog, translatedMessage]);
-      } catch (error) {
-        console.error(error.response);
-      }
-    };
-    translateText();
-  }, [textToTranslate]);
+          setChatLog((prevChatLog) => [...prevChatLog, translatedMessage]);
+        } catch (error) {
+          console.error(error.response);
+        }
+      };
+      translateText();
+    }
+  }, [textToTranslate, translate, language]);
 
   // scroll down when loading chat
   useEffect(() => {
@@ -241,7 +248,7 @@ const ChatRoom = () => {
               <h4 className="font-weight-bold mb-3 text-center text-lg-start">
                 Followers
               </h4>
-              <div className="card followers-container ">
+              <div className="card followers-container">
                 <div className="card-body">
                   <ul className="list-unstyled mb-0">
                     {followers &&
@@ -251,7 +258,14 @@ const ChatRoom = () => {
                           className="p-2"
                           key={item.id}
                           onClick={() =>
-                            chatHandler(item.followed_user, item.name)
+                            chatHandler(
+                              item.followed_user === user.user_id
+                                ? item.user
+                                : item.followed_user,
+                              item.followed_user === user.user_id
+                                ? item.user_name
+                                : item.follower_name
+                            )
                           }
                         >
                           <a
@@ -260,18 +274,24 @@ const ChatRoom = () => {
                           >
                             <div className="d-flex flex-row">
                               <img
-                                src={`${config.media_url}${item.image}`}
+                                src={`${config.media_url}${
+                                  item.followed_user === user.user_id
+                                    ? item.user_image
+                                    : item.follower_image
+                                }`}
                                 alt="avatar"
                                 className="rounded-circle d-flex align-self-center me-3 shadow-1-strong followers-avatar"
                               />
                               <div className="pt-1">
                                 <p className="fw-bold mb-0 text-decoration-none">
-                                  {item.name}
+                                  {item.followed_user === user.user_id
+                                    ? item.user_name
+                                    : item.follower_name}
                                 </p>
                                 <p className="small text-muted">Available</p>
                               </div>
                             </div>
-                            <div className="pt-1">
+                            {/* <div className="pt-1">
                               <p className="small text-muted mb-1">
                                 5 mins ago
                               </p>
@@ -281,7 +301,7 @@ const ChatRoom = () => {
                                   aria-hidden="true"
                                 ></i>
                               </span>
-                            </div>
+                            </div> */}
                           </a>
                         </li>
                       ))}
@@ -292,140 +312,143 @@ const ChatRoom = () => {
             <div className="col-md-8 col-lg-8 col-xl-8">
               <h3>Message</h3>
               <section style={{ backgroundColor: "#eee" }}>
-                <div className="container">
-                  <div className="row d-flex justify-content-center">
-                    <div className="col-md-12 col-lg-12 col-xl-12">
-                      <div className="card" id="chat2">
-                        <div className="card-header d-flex justify-content-between align-items-center p-3">
-                          <h5 className="mb-0">{recipientName}</h5>
+                <div className="row d-flex justify-content-center">
+                  <div className="col-md-12 col-lg-12 col-xl-12">
+                    <div className="card" id="chat2">
+                      <div className="card-header d-flex justify-content-between align-items-center p-3">
+                        <h5 className="mb-0">{recipientName}</h5>
 
-                          <div class="form-check form-switch">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              id="flexSwitchCheckDefault"
-                            />
-                            <label
-                              class="form-check-label"
-                              for="flexSwitchCheckDefault"
-                            >
-                              Translation
-                            </label>
-                          </div>
-
-                          <div class="mb-3">
-                            <select
-                              class="form-select form-select"
-                              name=""
-                              id=""
-                            >
-                              <option selected>Select Language</option>
-                              <option value="ml">Malayalam</option>
-                              <option value="tm">Tamil</option>
-                              <option value="hn">Hindi</option>
-                            </select>
-                          </div>
-                        </div>
-                        {loading ? ( // Show loading component when loading is true
-                          <div className="text-center">
-                            <RotatingLines
-                              strokeColor="grey"
-                              strokeWidth="5"
-                              animationDuration="0.75"
-                              width="96"
-                              visible={true}
-                            />
-                            <p>Chat Loading</p>
-                          </div>
-                        ) : (
-                          // Render the chat content when loading is false
-                          <div
-                            className="card-body"
-                            data-mdb-perfect-scrollbar="true"
-                            style={{
-                              position: "relative",
-                              height: "400px",
-                              overflowY: "auto",
-                            }}
-                            ref={chatContainerRef}
-                          >
-                            <ul className="list-unstyled">
-                              {chatLog && chatLog.length > 0 ? (
-                                chatLog.map((log, index) => (
-                                  <li
-                                    className={`d-flex mb-2 justify-content-${
-                                      log.sender === user.user_id
-                                        ? "end"
-                                        : "start"
-                                    }`}
-                                    key={index}
-                                  >
-                                    <img
-                                      src="https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png"
-                                      alt="avatar"
-                                      className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
-                                      width="60"
-                                    />
-
-                                    <div className="card">
-                                      <div className="card-header d-flex justify-content-between p-2">
-                                        <p className="fw-bold mb-0">
-                                          {log.sender_name}
-                                        </p>
-
-                                        <p className="text-muted small mb-0">
-                                          <i className="far fa-clock"></i> 12
-                                          mins ago
-                                        </p>
-                                      </div>
-                                      <div className="card-body">
-                                        <p className="mb-0 d-flex justify-content-between">
-                                          {log.message}
-                                        </p>
-                                        {log.translate && (
-                                          <p className="mb-0 text-center">
-                                            Translated : {log.translate}
-                                          </p>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </li>
-                                ))
-                              ) : (
-                                <p className="text-center">No chats</p>
-                              )}
-                            </ul>
-                          </div>
-                        )}
-                        <div className="card-footer text-muted d-flex justify-content-start align-items-center p-3">
-                          <img
-                            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
-                            alt="avatar 3"
-                            style={{ width: "40px", height: "100%" }}
-                          />
+                        <div class="form-check form-switch">
                           <input
-                            type="text"
-                            className="form-control form-control-lg"
-                            id="exampleFormControlInput1"
-                            placeholder="Type message"
-                            value={messageInput}
-                            onChange={(e) => setMessageInput(e.target.value)}
-                            onKeyDown={handleKeyPress}
+                            class="form-check-input"
+                            type="checkbox"
+                            id="flexSwitchCheckDefault"
+                            value={translate}
+                            onChange={(e) => setTranslate(e.target.checked)}
                           />
-                          <a className="ms-1 text-muted" href="#!">
-                            <i className="fas fa-paperclip"></i>
-                          </a>
-                          <a className="ms-3 text-muted" href="#!">
-                            <i className="fas fa-smile"></i>
-                          </a>
-                          <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={handleSendMessage}
+                          <label
+                            class="form-check-label"
+                            for="flexSwitchCheckDefault"
                           >
-                            <BsSendFill />
-                          </button>
+                            Translation
+                          </label>
                         </div>
+
+                        <div class="mb-3">
+                          <select
+                            class="form-select form-select"
+                            name=""
+                            id=""
+                            onChange={(e) => setLanguage(e.target.value)}
+                          >
+                            <option selected>Select Language</option>
+                            <option value="ml">Malayalam</option>
+                            <option value="ta">Tamil</option>
+                            <option value="hi">Hindi</option>
+                            <option value="te">Telugu</option>
+                            <option value="kn">Kannada</option>
+                          </select>
+                        </div>
+                      </div>
+                      {loading ? ( // Show loading component when loading is true
+                        <div className="text-center">
+                          <RotatingLines
+                            strokeColor="grey"
+                            strokeWidth="5"
+                            animationDuration="0.75"
+                            width="96"
+                            visible={true}
+                          />
+                          <p>Chat Loading</p>
+                        </div>
+                      ) : (
+                        // Render the chat content when loading is false
+                        <div
+                          className="card-body"
+                          data-mdb-perfect-scrollbar="true"
+                          style={{
+                            position: "relative",
+                            height: "400px",
+                            overflowY: "auto",
+                          }}
+                          ref={chatContainerRef}
+                        >
+                          <ul className="list-unstyled">
+                            {chatLog && chatLog.length > 0 ? (
+                              chatLog.map((log, index) => (
+                                <li
+                                  className={`d-flex mb-2 justify-content-${
+                                    log.sender === user.user_id
+                                      ? "end"
+                                      : "start"
+                                  }`}
+                                  key={index}
+                                >
+                                  <img
+                                    src="https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png"
+                                    alt="avatar"
+                                    className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
+                                    width="60"
+                                  />
+
+                                  <div className="card">
+                                    <div className="card-header d-flex justify-content-between p-2">
+                                      <p className="fw-bold mb-0">
+                                        {log.sender_name}
+                                      </p>
+
+                                      <p className="text-muted small mb-0">
+                                        <i className="far fa-clock"></i> 12 mins
+                                        ago
+                                      </p>
+                                    </div>
+                                    <div className="card-body">
+                                      <p className="mb-0 d-flex justify-content-between">
+                                        {log.message}
+                                      </p>
+                                      {log.translate && (
+                                        <p className="mb-0 text-center">
+                                          Translated : {log.translate}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </li>
+                              ))
+                            ) : (
+                              <p className="text-center">No chats</p>
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                      <div className="card-footer text-muted d-flex justify-content-start align-items-center p-3">
+                        <img
+                          src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
+                          alt="avatar 3"
+                          style={{ width: "40px", height: "100%" }}
+                        />
+                        <input
+                          type="text"
+                          className="form-control form-control-lg"
+                          id="exampleFormControlInput1"
+                          placeholder="Type message"
+                          value={messageInput}
+                          onChange={(e) => setMessageInput(e.target.value)}
+                          onKeyDown={handleKeyPress}
+                        />
+                        <a className="ms-1 text-muted" href="#!">
+                          <i className="fas fa-paperclip"></i>
+                        </a>
+                        <a className="ms-3 text-muted" href="#!">
+                          <i className="fas fa-smile"></i>
+                        </a>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          onClick={handleSendMessage}
+                        >
+                          <BsSendFill />
+                        </button>
                       </div>
                     </div>
                   </div>
