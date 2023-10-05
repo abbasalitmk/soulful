@@ -28,7 +28,7 @@ const Sidebar = (props) => {
             </Link>
           </li>
           <li>
-            <Link to="/notification" style={linkStyle}>
+            <Link to="/" style={linkStyle}>
               <BsFillBellFill style={iconStyle} />
               Notifications
             </Link>

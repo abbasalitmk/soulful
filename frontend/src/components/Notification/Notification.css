@@ -47,7 +47,8 @@
 }
 
 .notification-list--unread {
-    border-left: 2px solid #29B6F6;
+    border-left: 5px solid #29B6F6;
+    background-color: #b1e7df;
 }
 
 .notification-list .notification-list_content {

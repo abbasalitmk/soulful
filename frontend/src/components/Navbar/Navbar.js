@@ -3,10 +3,12 @@ import "./Navbar.css";
 import { Link } from "react-router-dom";
 import { FaCrown, FaBell, FaPowerOff } from "react-icons/fa6";
 import { Modal, Button } from "react-bootstrap";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Notification from "../Notification/Notification";
+import WebsocketContext from "../../context/WebsocketContext";
 
 const Navbar = ({ show, onHide }) => {
+  const { notification } = useContext(WebsocketContext);
   const [showModal, setShowModal] = useState(false);
   const linkStyle = {
     textDecoration: "none",
@@ -78,7 +80,11 @@ const Navbar = ({ show, onHide }) => {
             </li>
             <li className="nav-item">
               <Link
-                className="nav-link"
+                className={
+                  notification.length > 0
+                    ? "nav-link text-warning"
+                    : "nav-link text-white"
+                }
                 style={linkStyle}
                 onClick={() => setShowModal(true)}
               >

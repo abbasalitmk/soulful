@@ -23,25 +23,25 @@ const Sidebar = (props) => {
       <div className="">
         <ul>
           <li>
-            <Link style={linkStyle}>
+            <Link to="/" style={linkStyle}>
               <BsFillHouseDoorFill style={iconStyle} />
               Home
             </Link>
           </li>
           <li>
-            <Link style={linkStyle}>
+            <Link to="/notification" style={linkStyle}>
               <BsFillBellFill style={iconStyle} />
               Notifications
             </Link>
           </li>
           <li>
-            <Link style={linkStyle}>
+            <Link to="/meet" style={linkStyle}>
               <BsMessenger style={iconStyle} />
               Messages
             </Link>
           </li>
           <li>
-            <Link style={linkStyle}>
+            <Link to="/profile" style={linkStyle}>
               <BsPersonLinesFill style={iconStyle} />
               Profile
             </Link>

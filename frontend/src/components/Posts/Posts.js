@@ -363,7 +363,7 @@ const Posts = () => {
         return (
           <div className="row mx-auto text-center ">
             <div className="col post">
-              <div className="mt-2 m-3">
+              <div className="mt-2">
                 <div className="post-header d-flex justify-content-between">
                   <div className="post-owner d-flex justify-content-center text-center">
                     <img

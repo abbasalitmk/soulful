@@ -1,13 +1,13 @@
-from .models import Like
+from .models import FollowRequest
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
 
-@receiver(post_save, sender=Like)
-def send_like_notification(sender, instance, created, **kwargs):
+@receiver(post_save, sender=FollowRequest)
+def send_friend_request(sender, instance, created, **kwargs):
     if created:
-        liked_user = instance.liked_user.name.capitalize()
-        receiver_id = instance.post.user.id
+        sender = instance.sender.name.capitalize()
+        receiver_id = instance.reciever.id
         from channels.layers import get_channel_layer
         from asgiref.sync import async_to_sync
 
@@ -15,6 +15,6 @@ def send_like_notification(sender, instance, created, **kwargs):
         message = {
             "type": "notification_message",
             "receiver_id": receiver_id,
-            "message": f"{liked_user} liked your post.",
+            "message": f"{sender} send a friend request.",
         }
         async_to_sync(channel_layer.group_send)("notifications_group", message)

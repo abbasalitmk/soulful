@@ -5,18 +5,14 @@ from django.db.models import JSONField
 
 class MyUserManager(BaseUserManager):
     def create_user(self, email, name, password=None, **extra_fields):
-        """ 
+        """
         Creates and saves a User with the given phone, dpassword.
         """
 
         if not email:
             raise ValueError("Users must have an email address")
         email = self.normalize_email(email)
-        user = self.model(
-            email=email,
-            name=name,
-            **extra_fields
-        )
+        user = self.model(email=email, name=name, **extra_fields)
 
         user.set_password(password)
         user.save(using=self._db)
@@ -26,11 +22,11 @@ class MyUserManager(BaseUserManager):
         """
         Creates and saves a superuser with the given email and password.
         """
-        extra_fields.setdefault('is_admin', True)
-        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault("is_admin", True)
+        extra_fields.setdefault("is_staff", True)
 
-        if extra_fields.get('is_admin') is not True:
-            raise ValueError('Superuser must have is_admin=True.')
+        if extra_fields.get("is_admin") is not True:
+            raise ValueError("Superuser must have is_admin=True.")
 
         return self.create_user(email, password=password, **extra_fields)
 
@@ -47,7 +43,7 @@ class MyUser(AbstractBaseUser):
     objects = MyUserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = ["name"]
 
     # Add the required methods from PermissionsMixin
 
@@ -63,7 +59,8 @@ class MyUser(AbstractBaseUser):
 
 class UserProfile(models.Model):
     user = models.ForeignKey(
-        MyUser, on_delete=models.CASCADE, related_name='user_profile')
+        MyUser, on_delete=models.CASCADE, related_name="user_profile"
+    )
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=50, null=True, blank=True)
     dob = models.DateField()
@@ -80,9 +77,10 @@ class UserProfile(models.Model):
         return self.user.name
 
 
-class UserPreferences (models.Model):
+class UserPreferences(models.Model):
     user = models.ForeignKey(
-        MyUser, on_delete=models.CASCADE, related_name='user_preference')
+        MyUser, on_delete=models.CASCADE, related_name="user_preference"
+    )
     gender = models.CharField(max_length=50)
     interests = JSONField()
 
@@ -91,19 +89,20 @@ class UserPreferences (models.Model):
 
 
 class Images(models.Model):
-    user = models.ForeignKey(
-        MyUser, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='profile')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to="profile")
 
 
 class Followers(models.Model):
     user = models.ForeignKey(
-        MyUser, on_delete=models.CASCADE, related_name='followed_users')
+        MyUser, on_delete=models.CASCADE, related_name="followed_users"
+    )
     followed_user = models.ForeignKey(
-        MyUser, on_delete=models.CASCADE, related_name='user')
+        MyUser, on_delete=models.CASCADE, related_name="user"
+    )
 
     class Meta:
-        unique_together = ('user', 'followed_user')
+        unique_together = ("user", "followed_user")
 
     def __str__(self):
         return f"{self.user} follows {self.followed_user}"

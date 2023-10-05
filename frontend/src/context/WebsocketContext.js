@@ -1,11 +1,13 @@
 import { createContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 const WebsocketContext = createContext();
 
 export const WebsocketProvider = ({ children }) => {
   const [notificationSocket, setNotificationSocket] = useState(null);
-  const [notification, setNotification] = useState(null);
+  const [notification, setNotification] = useState([]);
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const socket = new WebSocket("ws://127.0.0.1:8000/ws/notifications/");
@@ -17,9 +19,20 @@ export const WebsocketProvider = ({ children }) => {
     socket.onmessage = (e) => {
       const messageData = JSON.parse(e.data);
 
-      if (messageData.type === "notification") {
-        setNotification(messageData.message);
-        toast.success(messageData.message);
+      if (
+        messageData.type === "notification" &&
+        messageData.receiver_id === user.user_id
+      ) {
+        setNotification((prev) => [...prev, messageData.message]);
+
+        toast(messageData.message, {
+          icon: "🔔",
+          position: "top-center",
+          style: {
+            background: "#1F618D",
+            color: "#fff",
+          },
+        });
       }
     };
 
@@ -36,7 +49,7 @@ export const WebsocketProvider = ({ children }) => {
   }, []);
 
   return (
-    <WebsocketContext.Provider value={(notificationSocket, notification)}>
+    <WebsocketContext.Provider value={{ notificationSocket, notification }}>
       {children}
     </WebsocketContext.Provider>
   );

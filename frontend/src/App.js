@@ -22,6 +22,7 @@ import SubscriptionPage from "./pages/Dashboard/SubscriptionPage";
 import UserPage from "./pages/Dashboard/UserPage";
 import Notification from "./components/Notification/Notification";
 import { WebsocketProvider } from "./context/WebsocketContext";
+import PublicRoute from "./utils/PublicRoute";
 
 function App() {
   return (
@@ -30,9 +31,12 @@ function App() {
       {/* <ToastContainer /> */}
       <Router>
         <Routes>
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          {/* redirect to post page if user is isAuthenticated */}
+          <Route element={<PublicRoute />}>
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          </Route>
 
           <Route
             path="/email-verification"

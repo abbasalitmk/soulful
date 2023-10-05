@@ -4,12 +4,13 @@ import Navbar from "../Navbar/Navbar";
 import Sidebar from "../Sidebar/Sidebar";
 import "./Match.css";
 import { BsHeartFill, BsFillHeartbreakFill, BsMessenger } from "react-icons/bs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import config from "../../config";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import AxiosInstance from "../../AxiosInstance";
+import WebsocketContext from "../../context/WebsocketContext";
 
 const Match = () => {
   const token = useSelector((state) => state.auth.token);
@@ -20,6 +21,7 @@ const Match = () => {
   const [profileCompleted, setProfileCompleted] = useState(false);
   const Axios = AxiosInstance();
   const [search, setSearch] = useState("");
+  const { notification } = useContext(WebsocketContext);
 
   useEffect(() => {
     const checkProfileCompleted = async () => {
@@ -62,15 +64,15 @@ const Match = () => {
   };
 
   useEffect(() => {
-    // if (userObj.profile_completed !== true) {
-    //   toast.error("Your profile not completed");
-    //   navigate("/edit-profile");
-    // }
-
     fetchData();
   }, []);
 
-  const handleSearch = async () => {
+  useEffect(() => {
+    fetchData();
+  }, [notification]);
+
+  const handleSearch = async (e) => {
+    setSearch(e.target.value);
     try {
       const response = await Axios.get(`user/all-users?query=${search}`);
       if (response.status === 200) {
@@ -129,7 +131,7 @@ const Match = () => {
                   type="text"
                   class="form-control"
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={handleSearch}
                 />
                 <button
                   class="btn btn-outline-secondary"

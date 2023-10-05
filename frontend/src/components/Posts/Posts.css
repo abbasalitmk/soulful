@@ -5,6 +5,19 @@
     box-shadow: 0px 0 3px 0px #b9a1a1;
 }
 
+@media (min-width: 992px) {
+
+  .post {
+    max-width: 90%;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+  }
+  .new-post{
+    max-width: 90%;
+      margin: 0 auto;
+      margin-bottom: 1rem;
+  }
+}
 
 .new-post-form::placeholder{
     font-size: 1.5rem;

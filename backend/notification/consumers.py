@@ -22,15 +22,21 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
             await self.channel_layer.group_send(
                 "notifications_group",
-                {"type": "notification_message", "message": notification_message},
+                {
+                    "type": "notification_message",
+                    "message": notification_message,
+                    "receiver_id": receiver_id,
+                },
             )
 
     async def notification_message(self, event):
         notification_message = event["message"]
+        receiver_id = event["receiver_id"]
         await self.send(
             text_data=json.dumps(
                 {
                     "type": "notification",
+                    "receiver_id": receiver_id,
                     "message": notification_message,
                     "channel": self.channel_name,
                 }
