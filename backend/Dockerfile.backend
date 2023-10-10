@@ -1,0 +1,42 @@
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y python3-dev gcc libc-dev
+
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV DJANGO_SETTINGS_MODULE=core.settings
+RUN pip install --upgrade pip
+
+ADD requirements.txt /app/
+RUN apt-get update && apt-get install -y \
+    python3-dev \
+    gcc \
+    libc-dev \
+    build-essential \
+    libjpeg-dev \
+    zlib1g-dev && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt && \
+    pip install Pillow
+
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# RUN useradd -u 1000 -ms /bin/bash django
+# USER django
+
+
+
+
+COPY . /app
+EXPOSE 8000
+RUN mkdir -p /vol/static && \
+    mkdir -p /vol/media
+RUN chmod +x /app/server-entrypoint.sh
+RUN chmod +x /app/worker-entrypoint.sh
+RUN chmod +x /app/beat-entrypoint.sh
+

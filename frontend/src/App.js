@@ -23,6 +23,7 @@ import UserPage from "./pages/Dashboard/UserPage";
 import Notification from "./components/Notification/Notification";
 import { WebsocketProvider } from "./context/WebsocketContext";
 import PublicRoute from "./utils/PublicRoute";
+import Login from "./components/Login/Login";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Routes>
           {/* redirect to post page if user is isAuthenticated */}
           <Route element={<PublicRoute />}>
+            <Route exact path="/" element={<Login />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/verify-email/:token" element={<VerifyEmail />} />

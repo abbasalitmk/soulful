@@ -41,14 +41,9 @@ const Posts = () => {
   const Axios = AxiosInstance();
 
   const fetchData = async () => {
-    console.log(token.access);
     try {
       setLoading(true);
-      const response = await axios.get("http://127.0.0.1:8000/posts/", {
-        headers: {
-          Authorization: `Bearer ${token.access}`,
-        },
-      });
+      const response = await Axios.get("http://127.0.0.1:8000/posts/");
       if (response.status === 200) {
         setData(response.data);
         console.log(data);

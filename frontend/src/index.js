@@ -6,17 +6,23 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import RefreshTokenProvider from "./context/RefreshTokenContext";
 import { WebsocketProvider } from "./context/WebsocketContext";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
+const queryClient = new QueryClient();
+
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <RefreshTokenProvider>
-        <WebsocketProvider>
-          <App />
-        </WebsocketProvider>
-      </RefreshTokenProvider>
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <RefreshTokenProvider>
+          <WebsocketProvider>
+            <App />
+          </WebsocketProvider>
+        </RefreshTokenProvider>
+      </Provider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
 
