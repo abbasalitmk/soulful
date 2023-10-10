@@ -180,7 +180,7 @@ STATIC_ROOT = os.getenv("STATIC_URL_PRO")
 # STATIC_ROOT = os.path.join(BASE_DIR, os.getenv("STATIC_URL"))
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, os.getenv("MEDIA_URL_DEV"))
+MEDIA_ROOT = os.path.join(BASE_DIR, os.getenv("MEDIA_URL_PRO"))
 
 
 # Default primary key field type
