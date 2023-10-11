@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "../../features/auth/authSlice";
 import toast from "react-hot-toast";
 import { InfinitySpin } from "react-loader-spinner";
+import config from "../../config";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const Register = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://127.0.0.1:8000/user/register/",
+        `${config.baseUrl}/user/register/`,
         formData
       );
       console.log(response.data);

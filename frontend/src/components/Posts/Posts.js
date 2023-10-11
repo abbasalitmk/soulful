@@ -43,7 +43,7 @@ const Posts = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await Axios.get("http://127.0.0.1:8000/posts/");
+      const response = await Axios.get(`${config.baseUrl}/posts/`);
       if (response.status === 200) {
         setData(response.data);
         console.log(data);
@@ -65,7 +65,7 @@ const Posts = () => {
   const postLikeHandler = async (id) => {
     try {
       const response = await axios.post(
-        `http://127.0.0.1:8000/posts/like/${id}`,
+        `${config.baseUrl}/posts/like/${id}`,
         {},
         {
           headers: {
@@ -118,7 +118,7 @@ const Posts = () => {
     try {
       setLoading(true);
       const post = await axios.post(
-        "http://127.0.0.1:8000/posts/create/",
+        `${config.baseUrl}/posts/create/`,
         formData,
         {
           headers: {
@@ -153,9 +153,7 @@ const Posts = () => {
   const deletePost = async (id) => {
     try {
       setLoading(true);
-      const response = await axios.post(
-        `http://127.0.0.1:8000/posts/delete/${id}`
-      );
+      const response = await axios.post(`${config.baseUrl}/posts/delete/${id}`);
       if (response.status === 200) {
         toast.success("Post deleted");
         fetchData();
@@ -178,7 +176,7 @@ const Posts = () => {
     setShowModal(!showModal);
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/posts/comment/${post_id}`,
+        `${config.baseUrl}/posts/comment/${post_id}`,
 
         {
           headers: {
@@ -201,7 +199,7 @@ const Posts = () => {
     console.log(commentText);
     try {
       const response = await axios.post(
-        `http://127.0.0.1:8000/posts/comment/${postId}`,
+        `${config.baseUrl}/posts/comment/${postId}`,
         {
           text: commentText,
         },

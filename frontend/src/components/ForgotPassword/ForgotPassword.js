@@ -6,6 +6,7 @@ import "./ForgotPassword.css";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
+import config from "../../config";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState(null);
@@ -24,7 +25,7 @@ const ForgotPassword = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://127.0.0.1:8000/user/reset-password/",
+        `${config.baseUrl}/user/reset-password/`,
         {
           email: email,
         }
@@ -48,13 +49,10 @@ const ForgotPassword = () => {
     setError(null);
     try {
       setLoading(true);
-      const response = await axios.post(
-        "http://127.0.0.1:8000/user/verify-otp/",
-        {
-          otp: otp,
-          email: email,
-        }
-      );
+      const response = await axios.post(`${config.baseUrl}/user/verify-otp/`, {
+        otp: otp,
+        email: email,
+      });
       if (response.status === 200) {
         setShowPasswordInput(true);
         setShowOTPInput(false);
@@ -73,7 +71,7 @@ const ForgotPassword = () => {
     try {
       setLoading(true);
       const response = await axios.put(
-        "http://127.0.0.1:8000/user/reset-password/",
+        `${config.baseUrl}/user/reset-password/`,
         {
           email: email,
           password: password,

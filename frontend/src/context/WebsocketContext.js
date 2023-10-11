@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import config from "../config";
 
 const WebsocketContext = createContext();
 
@@ -10,7 +11,7 @@ export const WebsocketProvider = ({ children }) => {
   const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://127.0.0.1:8000/ws/notifications/");
+    const socket = new WebSocket(`${config.socket_url}/ws/notifications/`);
 
     socket.onopen = () => {
       console.log("WebSocket connected in context");

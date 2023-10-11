@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import AxiosInstance from "../../AxiosInstance";
 import jwt_decode from "jwt-decode";
 import { setToken, setUser } from "../../features/auth/authSlice";
+import config from "../../config";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required("First Name is required"),
@@ -120,7 +121,7 @@ const EditProfile = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/user/edit-profile/",
+        `${config.baseUrl}/user/edit-profile/`,
         formData,
         {
           headers: {

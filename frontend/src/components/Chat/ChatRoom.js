@@ -59,7 +59,7 @@ const ChatRoom = () => {
   useEffect(() => {
     // Create a WebSocket connection when the component mounts
     const chatSocket = new WebSocket(
-      `ws://127.0.0.1:8000/ws/chat/${sender_id}/${recipientId}/`
+      `${config.socket_url}/ws/chat/${sender_id}/${recipientId}/`
     );
 
     chatSocket.onopen = () => {

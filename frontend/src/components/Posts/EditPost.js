@@ -38,7 +38,7 @@ const EditPost = (props) => {
     try {
       setLoading(true);
       const post = await axios.put(
-        "http://127.0.0.1:8000/posts/create/",
+        `${config.baseUrl}/posts/create/`,
         formData,
         {
           headers: {

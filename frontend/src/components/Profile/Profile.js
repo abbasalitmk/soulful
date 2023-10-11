@@ -48,7 +48,7 @@ const Profile = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://127.0.0.1:8000/user/profile/${user_id}`,
+        `${config.baseUrl}/user/profile/${user_id}`,
         {
           headers: {
             Authorization: `Bearer ${token.access}`,
@@ -97,7 +97,7 @@ const Profile = () => {
       try {
         setLoading(true);
         const response = await axios.post(
-          "http://127.0.0.1:8000/user/profile-picture/",
+          `${config.baseUrl}/user/profile-picture/`,
           formData,
           {
             headers: {

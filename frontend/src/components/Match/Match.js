@@ -44,14 +44,11 @@ const Match = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        "http://127.0.0.1:8000/user/all-users/",
-        {
-          headers: {
-            Authorization: `Bearer ${token.access}`,
-          },
-        }
-      );
+      const response = await axios.get(`${config.baseUrl}/user/all-users/`, {
+        headers: {
+          Authorization: `Bearer ${token.access}`,
+        },
+      });
       if (response.status === 200) {
         setUserData(response.data);
         toast.success("rendering");
@@ -87,7 +84,7 @@ const Match = () => {
     try {
       console.log(token.access);
       const response = await axios.post(
-        `http://127.0.0.1:8000/match/follow-request/${user_id}`,
+        `${config.baseUrl}/match/follow-request/${user_id}`,
         {},
         {
           headers: {

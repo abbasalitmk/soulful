@@ -11,6 +11,7 @@ import { setToken, setUser, setAdmin } from "../../features/auth/authSlice";
 import jwt_decode from "jwt-decode";
 import toast from "react-hot-toast";
 import { InfinitySpin } from "react-loader-spinner";
+import config from "../../config";
 
 const Login = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -39,7 +40,7 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post("http://127.0.0.1:8000/api/token/", {
+      const response = await axios.post(`${config.baseUrl}/api/token/`, {
         email,
         password,
       });

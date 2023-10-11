@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import logo from "../assets/logo.png";
 // import { toast } from 'react-toastify';
+import config from "../config";
 
 import { toast } from "react-hot-toast";
 import Navbar from "../components/Navbar/Navbar";
@@ -20,7 +21,7 @@ const VerifyEmail = (props) => {
   const verify = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/user/verify-email/?token=${token}`
+        `${config.baseUrl}/user/verify-email/?token=${token}`
       );
       if (response.status === 200) {
         setVerified(true);
