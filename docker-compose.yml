@@ -14,18 +14,22 @@ services:
   #     - backend
 
   nginx:
-    image: jonasal/nginx-certbot:latest
-    restart: unless-stopped
-    environment:
-      - CERTBOT_EMAIL
-    env_file:
-      - ./nginx-certbot.env
+    image: nginx:latest
     ports:
       - 80:80
       - 443:443
+    restart: always
     volumes:
-      - nginx_secrets:/etc/letsencrypt
-      - ./user_conf.d:/etc/nginx/user_conf.d
+      - ./nginx/default.conf:/etc/nginx/conf.d/:ro
+      - ./certbot/www:/var/www/certbot/:ro
+    depends_on:
+      - backend
+  
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
     
 
      
