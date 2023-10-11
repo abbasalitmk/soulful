@@ -14,20 +14,20 @@ services:
   #     - backend
 
   nginx:
+    image: jonasal/nginx-certbot:latest
     restart: unless-stopped
-    container_name: nginx
-    build:
-      context: ./
-      dockerfile: ./nginx/Dockerfile.nginx
+    environment:
+      - CERTBOT_EMAIL
+    env_file:
+      - ./nginx-certbot.env
     ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - backend
-      # - frontend
+      - 80:80
+      - 443:443
     volumes:
-      - static_volume:/vol/static
-      - media_volume:/vol/media
+      - nginx_secrets:/etc/letsencrypt
+      - ./user_conf.d:/etc/nginx/user_conf.d
+    
+
      
     
   postgres:
@@ -109,3 +109,4 @@ volumes:
   static_volume:
   media_volume:
   postgres_data: 
+  nginx_secrets:

@@ -13,8 +13,5 @@
 FROM nginx:1.19.0-alpine
 
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
-RUN apk update && apk add openssl
-RUN mkdir /etc/nginx/certs
-RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/nginx/certs/server.key -out /etc/nginx/certs/server.crt -days 365 -subj "/C=US/ST=New York/L=New York City/O=MyOrg/OU=MyUnit/CN=mydomain.com/emailAddress=admin@mydomain.com"
 CMD ["nginx", "-g", "daemon off;"]
 
