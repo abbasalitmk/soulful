@@ -2,28 +2,39 @@ version: '3.8'
 
 services:
 
-  frontend:
-    container_name: frontend
-    build:
-      context: .
-      dockerfile: ./frontend/Dockerfile.frontend 
-    ports:
-      - "3000:3000"
-    command: serve -s -l 3000
-    depends_on:
-      - backend
+  # frontend:
+  #   container_name: frontend
+  #   build:
+  #     context: .
+  #     dockerfile: ./frontend/Dockerfile.frontend 
+  #   ports:
+  #     - "3000:3000"
+  #   command: serve -s -l 3000
+  #   depends_on:
+  #     - backend
 
   nginx:
-    image: nginx:latest
-    ports:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.nginx
+    ports:  
       - 80:80
       - 443:443
     restart: always
     volumes:
-      - static_volume:/vol/static
-      - media_volume:/vol/media
+      - ./nginx:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     depends_on:
       - backend
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot -d ec2-13-51-227-44.eu-north-1.compute.amazonaws.com
 
     
   postgres:
