@@ -34,11 +34,12 @@ services:
 
 
   certbot:
+    container_name: certbot
     image: certbot/certbot
     volumes:
       - certbot_conf:/etc/letsencrypt
       - certbot_www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot -d soulful.fun www.soulful.fun --non-interactive --agree-tos --email abbasalitmk@gmail.com
+    command: certonly --webroot -w /var/www/certbot -d soulful.fun -d www.soulful.fun --non-interactive --agree-tos --email abbasalitmk@gmail.com
 
     depends_on:
       - nginx
