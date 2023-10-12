@@ -23,21 +23,21 @@ services:
     ports:  
       - 80:80
       - 443:443
-    restart: no
+    restart: always
     volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - nginx:/etc/nginx/conf.d
+      - certbot/conf:/etc/letsencrypt
+      - certbot/www:/var/www/certbot
     depends_on:
       - backend
 
 
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot -d soulful.fun --non-interactive --agree-tos --email abbasalitmk@gmail.com
+  # certbot:
+  #   image: certbot/certbot
+  #   volumes:
+  #     - ./certbot/conf:/etc/letsencrypt
+  #     - ./certbot/www:/var/www/certbot
+  #   command: certonly --webroot -w /var/www/certbot -d soulful.fun --non-interactive --agree-tos --email abbasalitmk@gmail.com
 
 
 
@@ -121,3 +121,6 @@ volumes:
   static_volume:
   media_volume:
   postgres_data: 
+  nginx:
+  certbot/www:
+  certbot/conf:
