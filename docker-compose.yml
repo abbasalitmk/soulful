@@ -10,112 +10,112 @@ services:
     ports:
       - "3000:3000"
     command: serve -s -l 3000
-    depends_on:
-      - backend
+    # depends_on:
+    #   - backend
 
-  certbot:
-      image: certbot/certbot
-      volumes:
-        - ./certbot/conf:/etc/letsencrypt
-        - ./certbot/www:/var/www/certbot
-      command: certonly --webroot -w /var/www/certbot -d soulful.fun --non-interactive --agree-tos --email abbasalitmk@gmail.com
+  # certbot:
+  #     image: certbot/certbot
+  #     volumes:
+  #       - ./certbot/conf:/etc/letsencrypt
+  #       - ./certbot/www:/var/www/certbot
+  #     command: certonly --webroot -w /var/www/certbot -d soulful.fun --non-interactive --agree-tos --email abbasalitmk@gmail.com
 
 
     
 
-  nginx:
-    container_name: nginx
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile.nginx
-    ports:  
-      - 80:80
-      - 443:443
-    restart: no
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    depends_on:
-      - backend
+  # nginx:
+  #   container_name: nginx
+  #   build:
+  #     context: ./nginx
+  #     dockerfile: Dockerfile.nginx
+  #   ports:  
+  #     - 80:80
+  #     - 443:443
+  #   restart: no
+  #   volumes:
+  #     - ./nginx:/etc/nginx/conf.d
+  #     - ./certbot/conf:/etc/letsencrypt
+  #     - ./certbot/www:/var/www/certbot
+  #   depends_on:
+  #     - backend
 
 
-  postgres:
-    restart: unless-stopped
-    image: postgres:13
-    container_name: db
-    environment:
-      POSTGRES_DB: soulful
-      POSTGRES_USER: soulful
-      POSTGRES_PASSWORD: soulful@123
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5435:5432"
+  # postgres:
+  #   restart: unless-stopped
+  #   image: postgres:13
+  #   container_name: db
+  #   environment:
+  #     POSTGRES_DB: soulful
+  #     POSTGRES_USER: soulful
+  #     POSTGRES_PASSWORD: soulful@123
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5435:5432"
 
 
-  backend:
-    restart: unless-stopped
-    container_name: backend
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile.backend
-    entrypoint: /app/server-entrypoint.sh
-    volumes:
-      - static_volume:/vol/static
-      - media_volume:/vol/media
-    ports:
-      - "8000:8000"
-    env_file:
-      - ./backend/.env
-    depends_on:
-      - redis
-      - postgres
+  # backend:
+  #   restart: unless-stopped
+  #   container_name: backend
+  #   build:
+  #     context: ./backend/
+  #     dockerfile: Dockerfile.backend
+  #   entrypoint: /app/server-entrypoint.sh
+  #   volumes:
+  #     - static_volume:/vol/static
+  #     - media_volume:/vol/media
+  #   ports:
+  #     - "8000:8000"
+  #   env_file:
+  #     - ./backend/.env
+  #   depends_on:
+  #     - redis
+  #     - postgres
    
 
  
-  worker:
-    restart: unless-stopped
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile.backend
-    container_name: worker
-    entrypoint: /app/worker-entrypoint.sh
-    environment:
-      DEBUG: "True"
-      CELERY_BROKER_URL: "redis://redis:6379/0"
-    depends_on:
-      - backend
-      - redis
+  # worker:
+  #   restart: unless-stopped
+  #   build:
+  #     context: ./backend/
+  #     dockerfile: Dockerfile.backend
+  #   container_name: worker
+  #   entrypoint: /app/worker-entrypoint.sh
+  #   environment:
+  #     DEBUG: "True"
+  #     CELERY_BROKER_URL: "redis://redis:6379/0"
+  #   depends_on:
+  #     - backend
+  #     - redis
 
 
-  beat:
-    restart: unless-stopped
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile.backend
-    entrypoint: /app/beat-entrypoint.sh
-    container_name: beat
-    environment:
-      DEBUG: "True"
-      CELERY_BROKER_URL: "redis://redis:6379/0"
-    depends_on:
-      - backend
-      - redis
+  # beat:
+  #   restart: unless-stopped
+  #   build:
+  #     context: ./backend/
+  #     dockerfile: Dockerfile.backend
+  #   entrypoint: /app/beat-entrypoint.sh
+  #   container_name: beat
+  #   environment:
+  #     DEBUG: "True"
+  #     CELERY_BROKER_URL: "redis://redis:6379/0"
+  #   depends_on:
+  #     - backend
+  #     - redis
 
 
-  redis:
-    restart: unless-stopped
-    container_name: redis
-    image: redis:7.0.5-alpine
-    expose:
-      - 6379
+  # redis:
+  #   restart: unless-stopped
+  #   container_name: redis
+  #   image: redis:7.0.5-alpine
+  #   expose:
+  #     - 6379
 
 
 
 
    
-volumes:
-  static_volume:
-  media_volume:
-  postgres_data: 
+# volumes:
+#   static_volume:
+#   media_volume:
+#   postgres_data: 
