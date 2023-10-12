@@ -2,16 +2,16 @@ version: '3.8'
 
 services:
 
-  # frontend:
-  #   container_name: frontend
-  #   build:
-  #     context: ./frontend/
-  #     dockerfile: Dockerfile.frontend 
-  #   ports:
-  #     - "3000:3000"
-  #   command: serve -s /app/build -l 3000
-  #   depends_on:
-  #     - backend
+  frontend:
+    container_name: frontend
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile.frontend 
+    ports:
+      - "3000:3000"
+    command: serve -s -l 3000
+    depends_on:
+      - backend
 
   nginx:
     image: nginx:latest
@@ -20,19 +20,11 @@ services:
       - 443:443
     restart: always
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/:ro
-      - ./certbot/www:/var/www/certbot/:ro
+      - static_volume:/vol/static
+      - media_volume:/vol/media
     depends_on:
       - backend
-  
-  certbot:
-    image: certbot/certbot:latest
-    volumes:
-      - ./certbot/www/:/var/www/certbot/:rw
-      - ./certbot/conf/:/etc/letsencrypt/:rw
-    
 
-     
     
   postgres:
     restart: unless-stopped
@@ -113,4 +105,3 @@ volumes:
   static_volume:
   media_volume:
   postgres_data: 
-  nginx_secrets:
