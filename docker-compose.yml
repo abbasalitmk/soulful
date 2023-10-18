@@ -28,6 +28,8 @@ services:
       - nginx:/etc/nginx/conf.d
       - certbot_conf:/etc/letsencrypt
       - certbot_www:/var/www/certbot
+      - static:/static
+      - media:/media
       
     depends_on:
       - backend
@@ -69,8 +71,8 @@ services:
       dockerfile: Dockerfile.backend
     entrypoint: /app/server-entrypoint.sh
     volumes:
-      - static_volume:/vol/static
-      - media_volume:/vol/media
+      - static:/static
+      - media:/media
     ports:
       - "8000:8000"
     env_file:
@@ -123,8 +125,8 @@ services:
 
    
 volumes:
-  static_volume:
-  media_volume:
+  static:
+  media:
   postgres_data: 
   nginx:
   certbot_conf:

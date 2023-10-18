@@ -34,8 +34,8 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY . /app
 EXPOSE 8000
-RUN mkdir -p /vol/static && \
-    mkdir -p /vol/media
+RUN mkdir -p /static && \
+    mkdir -p /media
 RUN chmod +x /app/server-entrypoint.sh
 RUN chmod +x /app/worker-entrypoint.sh
 RUN chmod +x /app/beat-entrypoint.sh
