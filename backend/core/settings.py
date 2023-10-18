@@ -182,7 +182,7 @@ STATIC_ROOT = os.getenv("STATIC_URL")
 # STATIC_ROOT = os.path.join(BASE_DIR, os.getenv("STATIC_URL"))
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # Default primary key field type
