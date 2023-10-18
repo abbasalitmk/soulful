@@ -13,7 +13,6 @@ const RefreshTokenProvider = ({ children }) => {
 
   useEffect(() => {
     const currentRefreshToken = currentToken?.refresh;
-    console.log(currentToken);
     const refreshTokenInterval = 1000 * 60 * 50;
 
     if (currentToken) {
@@ -28,12 +27,10 @@ const RefreshTokenProvider = ({ children }) => {
 
           if (response.status === 200) {
             const newToken = response.data;
-            console.log(newToken);
             const user = jwt_decode(newToken.access);
 
             dispatch(setToken(newToken));
             dispatch(setUser(user));
-            console.log(newToken);
             localStorage.setItem("access", JSON.stringify(newToken));
             localStorage.setItem("user", JSON.stringify(user));
           }

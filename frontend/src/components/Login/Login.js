@@ -12,6 +12,7 @@ import jwt_decode from "jwt-decode";
 import toast from "react-hot-toast";
 import { InfinitySpin } from "react-loader-spinner";
 import config from "../../config";
+import { googleLogout, useGoogleLogin, GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -22,6 +23,8 @@ const Login = () => {
   const [password, setPassword] = useState(null);
   const user = useSelector((state) => state.auth.user);
   const [loading, setLoading] = useState(false);
+  const [gUser, setGUser] = useState([]);
+  const [profile, setProfile] = useState(null);
 
   // const token = useSelector((state) => (state.auth.token))
 
@@ -40,7 +43,7 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post(`${config.baseUrl}/api/token/`, {
+      const response = await axios.post(`${config.baseUrl}/token/`, {
         email,
         password,
       });
@@ -48,26 +51,16 @@ const Login = () => {
       const user = jwt_decode(token.access);
 
       if (response.status === 200 && token) {
-        console.log(user.is_admin);
+        dispatch(setToken(token));
+        dispatch(setUser(user));
+        localStorage.setItem("access", JSON.stringify(token));
+        localStorage.setItem("user", JSON.stringify(user));
+        dispatch(setAdmin(user.is_admin));
 
-        if (!user.is_verified) {
-          toast.error("Your email not verified");
-          navigate("/email-verification");
-        } else if (!user.profile_completed) {
-          dispatch(setToken(token));
-          dispatch(setUser(user));
-          localStorage.setItem("access", JSON.stringify(token));
-          localStorage.setItem("user", JSON.stringify(user));
-
+        if (!user.profile_completed) {
           toast.error("Complete your profile");
           navigate("/edit-profile");
         } else {
-          dispatch(setToken(token));
-          dispatch(setUser(user));
-          localStorage.setItem("access", JSON.stringify(token));
-          localStorage.setItem("user", JSON.stringify(user));
-          dispatch(setAdmin(user.is_admin));
-
           if (user.is_admin) {
             navigate("/dashboard/posts");
           } else {
@@ -83,6 +76,100 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (response) => {
+      console.log(response.access_token);
+      try {
+        const res = await axios.get(
+          `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${response.access_token}`,
+          {
+            headers: {
+              Authorization: `Bearer ${response.access_token}`,
+              Accept: "application/json",
+            },
+          }
+        );
+        if (res.status === 200) {
+          setProfile(res.data);
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
+    onError: (error) => console.log("Login Failed:", error),
+  });
+
+  const googleAuth = async () => {
+    const password = profile.id + "@abc";
+    const formData = new FormData();
+    formData.append("name", profile.given_name);
+    formData.append("email", profile.email);
+    formData.append("password", password);
+    formData.append("confirm_password", password);
+
+    try {
+      console.log(formData.get("email"));
+      const response = await axios.post(
+        `${config.baseUrl}/user/google-login/`,
+        formData
+      );
+      if (response.status === 200 || response.status === 201) {
+        const response = await axios.post(`${config.baseUrl}/token/`, {
+          email: profile.email,
+          password: password,
+        });
+        const token = response.data;
+        const user = jwt_decode(token.access);
+
+        if (response.status === 200 && token) {
+          dispatch(setToken(token));
+          dispatch(setUser(user));
+          localStorage.setItem("access", JSON.stringify(token));
+          localStorage.setItem("user", JSON.stringify(user));
+          dispatch(setAdmin(user.is_admin));
+
+          if (!user.profile_completed) {
+            toast.error("Complete your profile");
+            navigate("/edit-profile");
+          } else {
+            if (user.is_admin) {
+              navigate("/dashboard/posts");
+            } else {
+              navigate("/posts");
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    if (profile) {
+      googleAuth();
+    }
+  }, [profile]);
+
+  // useEffect(() => {
+  //   if (gUser) {
+  //     axios
+  //       .get(
+  //         `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${gUser.access_token}`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${gUser.access_token}`,
+  //             Accept: "application/json",
+  //           },
+  //         }
+  //       )
+  //       .then((res) => {
+  //         setProfile(res.data);
+  //       })
+  //       .catch((err) => console.log(err));
+  //   }
+  // }, [gUser]);
 
   return (
     <div className="container mt-5">
@@ -103,22 +190,22 @@ const Login = () => {
                   Welcome Back <FaHandSpock />
                 </h4>
               </div>
-              <div className="mb-4">
-                <div className="d-grid gap-2">
+              <div className="mb-4 text-center w-100">
+                <div className="d-grid gap-2 ">
                   <button
                     type="button"
                     name=""
                     id=""
+                    onClick={googleLogin}
                     className="btn google-login d-flex justify-content-evenly rounded-pill"
                   >
-                    <FcGoogle size="1.5em" />
-                    Signin with Google
+                    <FcGoogle size="1.5em" /> Signin with Google
                   </button>
                 </div>
               </div>
 
               <div className="mb-3">
-                <label for="" className="form-label">
+                <label htmlFor="" className="form-label">
                   Email
                 </label>
                 <input
@@ -132,7 +219,7 @@ const Login = () => {
                 />
               </div>
               <div className="mb-3">
-                <label for="" className="form-label">
+                <label htmlFor="" className="form-label">
                   Password
                 </label>
                 <input

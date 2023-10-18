@@ -18,7 +18,7 @@ const Step3 = ({ data, setData }) => {
   return (
     <Fragment>
       <div className="mb-2 mt-2 text-center">
-        <h3>Your Personal Details</h3>
+        <h4>Complete your profile</h4>
         <h5>Step 3/3</h5>
       </div>
       <div className="mb-3">
@@ -62,30 +62,31 @@ const Step3 = ({ data, setData }) => {
         </div>
       </div>
       <div className="mb-2">
-        <label htmlFor="height">Height (in CM):</label>
-        <input
-          type="number"
+        <label htmlFor="bio">Bio</label>
+        <textarea
           className="form-control"
-          id="height"
-          name="height"
-          placeholder="Enter height"
+          id="bio"
+          name="bio"
+          placeholder="About me"
           required
           onChange={handleChange}
-          value={data.height}
+          value={data.bio}
         />
       </div>
       <div className="mb-2">
-        <label htmlFor="weight">Weight (in KG):</label>
-        <input
-          type="number"
-          className="form-control"
-          id="weight"
-          name="weight"
-          placeholder="Enter weight"
-          required
+        <label htmlFor="status">Relationship Status</label>
+        <select
           onChange={handleChange}
-          value={data.weight}
-        />
+          className="form-select "
+          name="status"
+          id="status"
+          value={data.status}
+        >
+          <option>Select Status</option>
+          <option value="single">Single</option>
+          <option value="married">Married</option>
+          <option value="divorced">Divorced</option>
+        </select>
       </div>
     </Fragment>
   );

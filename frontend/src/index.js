@@ -7,6 +7,7 @@ import { store } from "./store";
 import RefreshTokenProvider from "./context/RefreshTokenContext";
 import { WebsocketProvider } from "./context/WebsocketContext";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -15,13 +16,15 @@ const queryClient = new QueryClient();
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        <RefreshTokenProvider>
-          <WebsocketProvider>
-            <App />
-          </WebsocketProvider>
-        </RefreshTokenProvider>
-      </Provider>
+      <GoogleOAuthProvider clientId="987156327970-nh3iq8rb5b5ic7f65feeh49qp8bl0vvs.apps.googleusercontent.com">
+        <Provider store={store}>
+          <RefreshTokenProvider>
+            <WebsocketProvider>
+              <App />
+            </WebsocketProvider>
+          </RefreshTokenProvider>
+        </Provider>
+      </GoogleOAuthProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );

@@ -12,15 +12,14 @@ urlpatterns = [
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
-    path("admin/", admin.site.urls),
-    path("user/", include("users.urls")),
-    path("posts/", include("posts.urls")),
-    path("stories/", include("stories.urls")),
-    path("chat/", include("chat.urls")),
-    path("db/", include("dashboard.urls")),
-    path("subscription/", include("subscription.urls")),
-    path("match/", include("match.urls")),
+    path("api/admin/", admin.site.urls),
+    path("api/user/", include("users.urls")),
+    path("api/posts/", include("posts.urls")),
+    path("api/stories/", include("stories.urls")),
+    path("api/chat/", include("chat.urls")),
+    path("api/db/", include("dashboard.urls")),
+    path("api/subscription/", include("subscription.urls")),
+    path("api/match/", include("match.urls")),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

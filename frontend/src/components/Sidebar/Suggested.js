@@ -39,10 +39,6 @@ const Suggested = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    console.log(userData);
-  }, [userData]);
-
   return (
     <div className="suggested-scroll-container d-none d-lg-block d-xl-block">
       <div className="col-md-12">

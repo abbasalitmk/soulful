@@ -46,9 +46,8 @@ const Posts = () => {
       const response = await Axios.get(`${config.baseUrl}/posts/`);
       if (response.status === 200) {
         setData(response.data);
-        console.log(data);
       } else {
-        console.log("something went wrong!");
+        toast.error("something went wrong!");
       }
     } catch (error) {
       console.log(error.response);
@@ -59,7 +58,6 @@ const Posts = () => {
 
   useEffect(() => {
     fetchData();
-    toast("rendering.");
   }, []);
 
   const postLikeHandler = async (id) => {
@@ -252,7 +250,7 @@ const Posts = () => {
     setEditPost(false);
   };
 
-  // Update the post list for edited post component
+  // Update the post list htmlFor edited post component
 
   const updatePostList = (updatedPost) => {
     setData((prevData) =>
@@ -327,7 +325,7 @@ const Posts = () => {
                 loading="lazy"
                 required
               />
-              <label for="file">
+              <label htmlFor="file">
                 <li className="me-2 btn">
                   <FcCamera size={"2.4em"} />
                 </li>

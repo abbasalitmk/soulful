@@ -2,7 +2,7 @@
 .post{
     background-color: #f9f9f9;
     margin-bottom: .8rem;
-    box-shadow: 0px 0 3px 0px #b9a1a1;
+    box-shadow: 0px 0 3px 0px #919191;
 }
 
 @media (min-width: 992px) {
@@ -27,10 +27,11 @@
 
 .post-image {
   margin-top: 0.5rem;
-  width: 100%;
+  width: 90%;
   max-height: 75vh;
   object-fit: cover;
 }
+
 .image-preview{
     max-width: 20vw;
 }

@@ -1,17 +1,17 @@
 // const config = {
-//   apiUrl: "http://localhost:8000/",
-//   baseUrl: "http://127.0.0.1:8000/",
+//   apiUrl: "http://127.0.0.1:8000/",
+//   baseUrl: "http://127.0.0.1:8000/api",
 //   media_url: "http://127.0.0.1:8000",
+//   socket_url: "ws://127.0.0.1:8000",
+//   axios_url: "http://127.0.0.1:8000/api/",
 // };
 
-// export default config;
-
 const config = {
-  apiUrl: "https://13.51.227.44",
-  baseUrl: "https://13.51.227.44",
-  media_url: "http://13.51.227.44",
-  socket_url: "wss://13.51.227.44",
-  axios_url: "https://13.51.227.44/",
+  apiUrl: "https://soulful.fun",
+  baseUrl: "https://soulful.fun/api",
+  media_url: "https://soulful.fun",
+  socket_url: "wss://soulful.fun",
+  axios_url: "https://soulful.fun/api/",
 };
 
 export default config;

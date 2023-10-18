@@ -70,8 +70,8 @@ class UserProfile(models.Model):
     country = models.CharField(max_length=100)
     skinColor = models.CharField(max_length=255, null=True, blank=True)
     hairColor = models.CharField(max_length=255, null=True, blank=True)
-    height = models.PositiveIntegerField(null=True, blank=True)
-    weight = models.PositiveIntegerField(null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)
+    status = models.CharField(null=True, blank=True)
 
     def __str__(self):
         return self.user.name
@@ -112,3 +112,8 @@ class PasswordReset(models.Model):
     email = models.EmailField(unique=True)
     otp = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class GoogleLogin(models.Model):
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=255)

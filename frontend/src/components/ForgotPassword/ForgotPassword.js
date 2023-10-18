@@ -20,7 +20,6 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
 
   const resetPasswordHandler = async () => {
-    console.log(email);
     setError(null);
     try {
       setLoading(true);
@@ -31,15 +30,12 @@ const ForgotPassword = () => {
         }
       );
       if (response.status === 200) {
-        console.log(response.data);
         setShowOTPInput(true);
       }
     } catch (error) {
       if (error) {
         setError(error.response.data.message);
       }
-
-      console.log(error.response);
     } finally {
       setLoading(false);
     }
@@ -56,7 +52,6 @@ const ForgotPassword = () => {
       if (response.status === 200) {
         setShowPasswordInput(true);
         setShowOTPInput(false);
-        console.log(response.data);
       }
     } catch (error) {
       if (error) {
@@ -84,7 +79,6 @@ const ForgotPassword = () => {
         navigate("/login");
       }
     } catch (error) {
-      console.log(error.response);
       if (error) {
         setError(error.response.data.message);
       }
@@ -164,13 +158,13 @@ const ForgotPassword = () => {
               </button>
             </div>
             <div className={showPasswordInput ? "d-show" : "d-none"}>
-              <div class="mb-3">
-                <label for="" class="form-label">
+              <div className="mb-3">
+                <label htmlFor="" className="form-label">
                   New Password
                 </label>
                 <input
                   type="password"
-                  class="form-control form-control-lg"
+                  className="form-control form-control-lg"
                   name=""
                   id=""
                   value={password}
@@ -178,13 +172,13 @@ const ForgotPassword = () => {
                   placeholder=""
                 />
               </div>
-              <div class="mb-3">
-                <label for="" class="form-label">
+              <div className="mb-3">
+                <label htmlFor="" className="form-label">
                   Confirm Password
                 </label>
                 <input
                   type="password"
-                  class="form-control form-control-lg"
+                  className="form-control form-control-lg"
                   name=""
                   id=""
                   onChange={(e) => setConfirmPassword(e.target.value)}

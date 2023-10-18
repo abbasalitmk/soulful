@@ -26,9 +26,6 @@ const ChatRoom = () => {
   const [textToTranslate, setTextToTranslate] = useState(null);
   const [translate, setTranslate] = useState(false);
   const [language, setLanguage] = useState("ml");
-  const [lastChat, setLastChat] = useState(null);
-
-  const [isPrime, setIsPrime] = useState("");
 
   const AZURE_KEY = process.env.REACT_APP_AZURE_KEY;
   const AZURE_LOCATION = process.env.AZURE_LOCATION;
@@ -51,10 +48,6 @@ const ChatRoom = () => {
   useEffect(() => {
     checkPrime();
   }, []);
-
-  useEffect(() => {
-    console.log(translate);
-  }, [translate]);
 
   useEffect(() => {
     // Create a WebSocket connection when the component mounts
@@ -131,9 +124,7 @@ const ChatRoom = () => {
 
   const scrollToLatestMessage = () => {
     if (chatContainerRef.current) {
-      console.log(chatContainerRef);
       const chatContainer = chatContainerRef.current;
-      console.log(chatContainer);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   };
@@ -142,7 +133,6 @@ const ChatRoom = () => {
     try {
       const response = await Axios.get("/chat/followers/");
       if (response.status === 200) {
-        console.log(response.data);
         setFollowers(response.data);
       }
     } catch (error) {
@@ -163,16 +153,13 @@ const ChatRoom = () => {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      console.log(user.user_id, recipientId);
       const response = await Axios.get(
         `chat/messages/${user.user_id}/${recipientId}`
       );
 
       if (response.status === 200) {
-        console.log(response.data);
         const data = response.data;
         setChatLog((prevLog) => [...prevLog, ...data]);
-        console.log(chatLog);
       }
     } catch (error) {
       console.log(error.response);
@@ -241,7 +228,7 @@ const ChatRoom = () => {
 
   return (
     <div className="col-md-12">
-      <section style={{ backgroundColor: "#eee" }}>
+      <section style={{ backgroundColor: "rgb(221, 221, 221)" }}>
         <div className="container py-3">
           <div className="row">
             <div className="col-md-4 col-lg-4 col-xl-4 mb-4 mb-md-0">
@@ -318,25 +305,22 @@ const ChatRoom = () => {
                       <div className="card-header d-flex justify-content-between align-items-center p-3">
                         <h5 className="mb-0">{recipientName}</h5>
 
-                        <div class="form-check form-switch">
+                        <div className="form-check form-switch">
                           <input
-                            class="form-check-input"
+                            className="form-check-input"
                             type="checkbox"
                             id="flexSwitchCheckDefault"
                             value={translate}
                             onChange={(e) => setTranslate(e.target.checked)}
                           />
-                          <label
-                            class="form-check-label"
-                            for="flexSwitchCheckDefault"
-                          >
+                          <label className="form-check-label">
                             Translation
                           </label>
                         </div>
 
-                        <div class="mb-3">
+                        <div className="mb-3">
                           <select
-                            class="form-select form-select"
+                            className="form-select form-select"
                             name=""
                             id=""
                             onChange={(e) => setLanguage(e.target.value)}

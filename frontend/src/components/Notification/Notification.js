@@ -51,7 +51,6 @@ const Notification = () => {
     try {
       const response = await Axios.get("match/get-requests/");
       if (response.status === 200) {
-        console.log(response.data);
         setNotifications(response.data);
       }
     } catch (error) {

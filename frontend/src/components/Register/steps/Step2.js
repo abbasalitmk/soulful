@@ -12,7 +12,7 @@ const Step2 = ({ data, setData }) => {
   return (
     <Fragment>
       <div className="mb-2 mt-2 text-center">
-        <h3>Where do you live?</h3>
+        <h4>Complete your profile</h4>
         <h5>Step 2/3</h5>
       </div>
       <div class="mb-2">

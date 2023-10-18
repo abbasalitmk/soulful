@@ -71,25 +71,25 @@ const EditPost = (props) => {
           <Modal.Title>Edit Post</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div class="mb-3">
-            <label for="" class="form-label">
+          <div className="mb-3">
+            <label htmlFor="" className="form-label">
               Title
             </label>
             <textarea
-              class="form-control form-control-lg"
+              className="form-control form-control-lg"
               name=""
               id=""
               onChange={(e) => setTitle(e.target.value)}
               value={title}
             />
           </div>
-          <div class="mb-3">
-            <label for="" class="form-label">
+          <div className="mb-3">
+            <label htmlFor="" className="form-label">
               Change Image
             </label>
             <input
               type="file"
-              class="form-control"
+              className="form-control"
               name=""
               id=""
               onChange={selectPostImage}

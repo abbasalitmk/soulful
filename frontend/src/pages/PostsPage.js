@@ -9,7 +9,7 @@ const PostsPage = () => {
     <Fragment>
       <Navbar />
       <div className="container">
-        <div className="row" style={{ backgroundColor: "#f0f2f5" }}>
+        <div className="row">
           <Sidebar />
           <Posts />
           {/* <Suggested /> */}

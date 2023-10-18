@@ -24,12 +24,8 @@ const validationSchema = Yup.object().shape({
 
   skinColor: Yup.string().required("Skin Color is required"),
   hairColor: Yup.string().required("Hair Color is required"),
-  height: Yup.number()
-    .required("Height is required")
-    .positive("Height must be a positive number"),
-  weight: Yup.number()
-    .required("Weight is required")
-    .positive("Weight must be a positive number"),
+
+  status: Yup.string().required("Relationship status is required"),
 });
 
 const EditProfile = () => {
@@ -39,15 +35,12 @@ const EditProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [profileCompleted, setProfileCompleted] = useState(false);
-
   useEffect(() => {
     const checkProfileCompleted = async () => {
       try {
         const response = await Axios.get("user/edit-profile/");
         if (response.status === 200) {
           if (!response.data.profile_completed) {
-            console.log(response.data.profile_completed);
             toast.error("Your profile not completed");
             navigate("/edit-profile");
           }
@@ -69,8 +62,8 @@ const EditProfile = () => {
     country: "",
     skinColor: "",
     hairColor: "",
-    height: "",
-    weight: "",
+    bio: "",
+    status: "",
   };
   const [data, setData] = useState(initialState);
 
@@ -116,8 +109,8 @@ const EditProfile = () => {
 
     formData.append("skinColor", data.skinColor);
     formData.append("hairColor", data.hairColor);
-    formData.append("height", data.height);
-    formData.append("weight", data.weight);
+    formData.append("bio", data.bio);
+    formData.append("status", data.status);
 
     try {
       const response = await axios.post(
@@ -184,7 +177,7 @@ const EditProfile = () => {
                 <button
                   onClick={() => setStep((state) => state - 1)}
                   type="button"
-                  class="btn btn-light"
+                  className="btn btn-light"
                 >
                   Back
                 </button>
@@ -193,7 +186,7 @@ const EditProfile = () => {
                 <button
                   onClick={() => setStep((state) => state + 1)}
                   type="button"
-                  class="btn btn-light"
+                  className="btn btn-light"
                 >
                   Next
                 </button>
@@ -202,7 +195,7 @@ const EditProfile = () => {
                 <button
                   onClick={() => validateForm()}
                   type="button"
-                  class="btn btn-success"
+                  className="btn btn-success"
                 >
                   Save
                 </button>

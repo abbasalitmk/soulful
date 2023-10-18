@@ -18,7 +18,10 @@ const Sidebar = (props) => {
   };
 
   return (
-    <div className="col-3 sidebar-container d-none d-lg-block d-xl-block">
+    <div
+      className="col-3 sidebar-container d-none d-lg-block d-xl-block"
+      style={{ backgroundColor: "rgb(221, 221, 221)" }}
+    >
       <div className="">
         <ul>
           <li>

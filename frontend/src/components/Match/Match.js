@@ -3,7 +3,7 @@ import pic from "../../assets/avatar.jpeg";
 import Navbar from "../Navbar/Navbar";
 import Sidebar from "../Sidebar/Sidebar";
 import "./Match.css";
-import { BsHeartFill, BsFillHeartbreakFill, BsMessenger } from "react-icons/bs";
+import { BsHeartFill, BsMessenger } from "react-icons/bs";
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import config from "../../config";
@@ -18,7 +18,6 @@ const Match = () => {
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
-  const [profileCompleted, setProfileCompleted] = useState(false);
   const Axios = AxiosInstance();
   const [search, setSearch] = useState("");
   const { notification } = useContext(WebsocketContext);
@@ -29,7 +28,6 @@ const Match = () => {
         const response = await Axios.get("user/edit-profile/");
         if (response.status === 200) {
           if (!response.data.profile_completed) {
-            console.log(response.data.profile_completed);
             toast.error("Your profile not completed");
             navigate("/edit-profile");
           }
@@ -82,7 +80,6 @@ const Match = () => {
 
   const userFollowingHandler = async (user_id) => {
     try {
-      console.log(token.access);
       const response = await axios.post(
         `${config.baseUrl}/match/follow-request/${user_id}`,
         {},
@@ -94,7 +91,6 @@ const Match = () => {
       );
       if (response.status === 200) {
         toast.success("Friend Request sent");
-        console.log(response.data);
         fetchData();
       } else if (response.status === 202) {
         toast.success("Your are Unfollowed");
@@ -102,8 +98,6 @@ const Match = () => {
       } else {
         toast.error("Something Happened");
       }
-
-      console.log(response.data);
     } catch (error) {
       console.log(error.response);
     }
@@ -123,15 +117,15 @@ const Match = () => {
         <div className="col-md-9 offset-md-3 p-4">
           <div className="row">
             <div className="search-bar mb-4">
-              <div class="input-group w-50 mx-auto">
+              <div className="input-group w-50 mx-auto">
                 <input
                   type="text"
-                  class="form-control"
+                  className="form-control"
                   value={search}
                   onChange={handleSearch}
                 />
                 <button
-                  class="btn btn-outline-secondary"
+                  className="btn btn-outline-secondary"
                   type="button"
                   onClick={handleSearch}
                 >

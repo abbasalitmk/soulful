@@ -41,21 +41,17 @@ const Register = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${config.baseUrl}/user/register/`,
+        `${config.baseUrl}/user/verify-details/`,
         formData
       );
-      console.log(response.data);
       setLoading(true);
       if (response.status === 201) {
-        console.log(response);
         toast.success(response.data.message);
 
-        // dispatch(setToken(response.data.access))
-        navigate("/email-verification");
+        navigate("/email-verification", { state: { formData } });
       }
     } catch (error) {
       const errorMessage = error.response.data;
-      console.log(errorMessage);
 
       if (errorMessage) {
         if (errorMessage.email) {
@@ -95,7 +91,6 @@ const Register = () => {
                     <h3 className="text-center">
                       Join us today <FaHandSpock color="#ffce19" />{" "}
                     </h3>
-                    <h5 className="text-center">It's Free !</h5>
                   </div>
                 )}
               </div>
@@ -113,7 +108,7 @@ const Register = () => {
                 </div>
               </div>
               <div className="mb-2">
-                <label for="" className="form-label">
+                <label htmlFor="" className="form-label">
                   Name
                 </label>
                 <input
@@ -127,7 +122,7 @@ const Register = () => {
                 />
               </div>
               <div className="mb-2">
-                <label for="" className="form-label">
+                <label htmlFor="" className="form-label">
                   Email
                 </label>
                 <input
@@ -141,7 +136,7 @@ const Register = () => {
                 />
               </div>
               <div className="mb-2">
-                <label for="" className="form-label">
+                <label htmlFor="" className="form-label">
                   Password
                 </label>
                 <input
@@ -154,7 +149,7 @@ const Register = () => {
                 />
               </div>
               <div className="mb-2">
-                <label for="" className="form-label">
+                <label htmlFor="" className="form-label">
                   Confirm Password
                 </label>
                 <input
