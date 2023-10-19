@@ -14,23 +14,23 @@ services:
       - backend
 
    
-backend:
-  restart: unless-stopped
-  container_name: backend
-  build:
-    context: ./backend/
-    dockerfile: Dockerfile.backend
-  entrypoint: /app/server-entrypoint.sh
-  volumes:
-    - static:/static
-    - /app/media
-  ports:
-    - "8000:8000"
-  env_file:
-    - ./backend/.env
-  depends_on:
-    - redis
-    - postgres
+  backend:
+    restart: unless-stopped
+    container_name: backend
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile.backend
+    entrypoint: /app/server-entrypoint.sh
+    volumes:
+      - static:/static
+      - /app/media
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - redis
+      - postgres
    
    
 
