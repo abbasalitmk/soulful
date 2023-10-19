@@ -3,6 +3,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import jwt_decode from "jwt-decode";
 import { setToken, setUser } from "../features/auth/authSlice";
+import config from "../config";
 
 const RefreshTokenContext = createContext();
 
@@ -19,7 +20,7 @@ const RefreshTokenProvider = ({ children }) => {
       const updateToken = async () => {
         try {
           const response = await axios.post(
-            "http://127.0.0.1:8000/api/token/refresh/",
+            `${config.baseUrl}/token/refresh/`,
             {
               refresh: currentRefreshToken,
             }

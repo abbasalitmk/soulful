@@ -6,26 +6,22 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import RefreshTokenProvider from "./context/RefreshTokenContext";
 import { WebsocketProvider } from "./context/WebsocketContext";
-import { QueryClient, QueryClientProvider } from "react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-
-const queryClient = new QueryClient();
+const id = process.env.REACT_APP_CLIENT_ID;
 
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <GoogleOAuthProvider clientId="987156327970-nh3iq8rb5b5ic7f65feeh49qp8bl0vvs.apps.googleusercontent.com">
-        <Provider store={store}>
-          <RefreshTokenProvider>
-            <WebsocketProvider>
-              <App />
-            </WebsocketProvider>
-          </RefreshTokenProvider>
-        </Provider>
-      </GoogleOAuthProvider>
-    </QueryClientProvider>
+    <GoogleOAuthProvider clientId={id}>
+      <Provider store={store}>
+        <RefreshTokenProvider>
+          <WebsocketProvider>
+            <App />
+          </WebsocketProvider>
+        </RefreshTokenProvider>
+      </Provider>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
 

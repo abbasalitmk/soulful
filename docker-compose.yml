@@ -13,6 +13,27 @@ services:
     depends_on:
       - backend
 
+   
+backend:
+  restart: unless-stopped
+  container_name: backend
+  build:
+    context: ./backend/
+    dockerfile: Dockerfile.backend
+  entrypoint: /app/server-entrypoint.sh
+  volumes:
+    - /app/static
+    - /app/media
+  ports:
+    - "8000:8000"
+  env_file:
+    - ./backend/.env
+  depends_on:
+    - redis
+    - postgres
+   
+   
+
   
 
   nginx:
@@ -28,8 +49,8 @@ services:
       - nginx:/etc/nginx/conf.d
       - certbot_conf:/etc/letsencrypt
       - certbot_www:/var/www/certbot
-      - static:/static
-      - media:/media
+      - /app/static:/static
+      - /app/media:/media
       
     depends_on:
       - backend
@@ -62,25 +83,6 @@ services:
     ports:
       - "5435:5432"
 
-
-  backend:
-    restart: unless-stopped
-    container_name: backend
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile.backend
-    entrypoint: /app/server-entrypoint.sh
-    volumes:
-      - static:/static
-      - media:/media
-    ports:
-      - "8000:8000"
-    env_file:
-      - ./backend/.env
-    depends_on:
-      - redis
-      - postgres
-   
 
  
   worker:
@@ -126,7 +128,6 @@ services:
    
 volumes:
   static:
-  media:
   postgres_data: 
   nginx:
   certbot_conf:
