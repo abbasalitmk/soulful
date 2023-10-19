@@ -22,7 +22,7 @@ backend:
     dockerfile: Dockerfile.backend
   entrypoint: /app/server-entrypoint.sh
   volumes:
-    - /app/static
+    - static:/static
     - /app/media
   ports:
     - "8000:8000"
@@ -49,7 +49,7 @@ backend:
       - nginx:/etc/nginx/conf.d
       - certbot_conf:/etc/letsencrypt
       - certbot_www:/var/www/certbot
-      - /app/static:/static
+      - static:/static
       - /app/media:/media
       
     depends_on:
