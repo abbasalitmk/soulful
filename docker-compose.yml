@@ -50,7 +50,7 @@ services:
       - certbot_conf:/etc/letsencrypt
       - certbot_www:/var/www/certbot
       - static:/static
-      - media:/media
+      - media:/app/media
       
     depends_on:
       - backend

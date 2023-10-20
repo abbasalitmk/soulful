@@ -45,7 +45,7 @@ const Subscription = () => {
       if (orderId) {
         // Open the Razorpay payment interface using the orderId
         const options = {
-          key: process.env.RAZORPAY_API_KEY,
+          key: process.env.REACT_APP_RAZORPAY_API_KEY,
           amount: amount,
           currency: "INR",
           order_id: orderId,

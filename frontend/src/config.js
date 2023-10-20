@@ -10,7 +10,7 @@ const config = {
   apiUrl: "https://soulful.fun",
   baseUrl: "https://soulful.fun/api",
   media_url: "https://soulful.fun",
-  socket_url: "wss://soulful.fun",
+  socket_url: "wss://soulful.fun/api",
   axios_url: "https://soulful.fun/api/",
 };
 
