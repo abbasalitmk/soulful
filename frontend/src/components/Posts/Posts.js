@@ -46,6 +46,7 @@ const Posts = () => {
       const response = await Axios.get(`${config.baseUrl}/posts/`);
       if (response.status === 200) {
         setData(response.data);
+        console.log(response.data);
       } else {
         toast.error("something went wrong!");
       }
@@ -386,7 +387,11 @@ const Posts = () => {
                       <ul className="dropdown-menu">
                         <Link
                           onClick={() =>
-                            editPostHandler(item.id, item.title, item.image)
+                            editPostHandler(
+                              item.id,
+                              item.title,
+                              item.image.image
+                            )
                           }
                           className="dropdown-item text-decoration-none"
                         >
@@ -408,7 +413,7 @@ const Posts = () => {
                 <p className="post-description">{item.title}</p>
                 <img
                   className="post-image "
-                  src={`${config.media_url}${item.image && item.image.image}`}
+                  src={item.image.image}
                   key={index}
                   alt="beach"
                 />

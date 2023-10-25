@@ -2,6 +2,7 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
+import cloudinary
 
 
 load_dotenv()
@@ -16,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-fe1*62&14_@jug-75lh_5sos0b0k7@9jg5fj19_gb!^ii+e$i^"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -42,6 +43,8 @@ INSTALLED_APPS = [
     "stories",
     "match",
     "subscription",
+    'cloudinary_storage',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -181,8 +184,9 @@ STATIC_ROOT = os.getenv("STATIC_URL")
 
 # STATIC_ROOT = os.path.join(BASE_DIR, os.getenv("STATIC_URL"))
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 # Default primary key field type
@@ -253,3 +257,14 @@ RAZORPAY_API_SECRET = os.getenv("RAZORPAY_API_SECRET")
 
 # google authentication
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
+
+
+# cloudinary setup
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': "dboiyq886",
+    'API_KEY': os.getenv("CLOUDINARY_API_KEY"),
+    'API_SECRET': os.getenv("CLOUDINARY_API_SECRET")
+}
+
+

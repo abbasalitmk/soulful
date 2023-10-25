@@ -5,15 +5,14 @@ import config from "../../config";
 import AxiosInstance from "../../AxiosInstance";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { FallingLines } from "react-loader-spinner";
 
 const EditPost = (props) => {
   const postId = props.postId;
   const [title, setTitle] = useState(props.title);
   const [postImage, setPostImage] = useState(null);
   const [showModal, setShowModal] = useState(true);
-  const [imagePreview, setImagePreview] = useState(
-    props.image ? config.media_url + props.image.image : null
-  );
+  const [imagePreview, setImagePreview] = useState(props.image && props.image);
   const [loading, setLoading] = useState(false);
   const Axios = AxiosInstance();
   const token = useSelector((state) => state.auth.token);
@@ -25,6 +24,7 @@ const EditPost = (props) => {
       setPostImage(image);
     }
   };
+  console.log(props.image);
 
   const updatePostHandler = async () => {
     const formData = new FormData();
@@ -71,41 +71,55 @@ const EditPost = (props) => {
           <Modal.Title>Edit Post</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="mb-3">
-            <label htmlFor="" className="form-label">
-              Title
-            </label>
-            <textarea
-              className="form-control form-control-lg"
-              name=""
-              id=""
-              onChange={(e) => setTitle(e.target.value)}
-              value={title}
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="" className="form-label">
-              Change Image
-            </label>
-            <input
-              type="file"
-              className="form-control"
-              name=""
-              id=""
-              onChange={selectPostImage}
-              placeholder=""
-            />
-          </div>
-
-          <div className="mb-3">
-            <div className="editpost-image text-center">
-              <img
-                src={imagePreview && imagePreview}
-                alt="postImage"
-                style={{ width: "30%" }}
+          {loading ? (
+            <div className="text-center">
+              <FallingLines
+                color="#4fa94d"
+                width="100"
+                visible={true}
+                ariaLabel="falling-lines-loading"
               />
+              <p>Updating post...</p>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="mb-3">
+                <label htmlFor="" className="form-label">
+                  Title
+                </label>
+                <textarea
+                  className="form-control form-control-lg"
+                  name=""
+                  id=""
+                  onChange={(e) => setTitle(e.target.value)}
+                  value={title}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="" className="form-label">
+                  Change Image
+                </label>
+                <input
+                  type="file"
+                  className="form-control"
+                  name=""
+                  id=""
+                  onChange={selectPostImage}
+                  placeholder=""
+                />
+              </div>
+
+              <div className="mb-3">
+                <div className="editpost-image text-center">
+                  <img
+                    src={imagePreview && imagePreview}
+                    alt="postImage"
+                    style={{ width: "30%" }}
+                  />
+                </div>
+              </div>
+            </>
+          )}
         </Modal.Body>
         <Modal.Footer>
           <button

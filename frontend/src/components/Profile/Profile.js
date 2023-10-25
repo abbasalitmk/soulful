@@ -96,6 +96,7 @@ const Profile = () => {
       if (response.status === 200) {
         setUserData(response.data);
         setEditedData(response.data.user_profile);
+        console.log(response.data);
       }
     } catch (error) {
     } finally {
@@ -231,7 +232,7 @@ const Profile = () => {
                     src={
                       userData.profile_pictures &&
                       userData.profile_pictures.length > 0
-                        ? config.media_url + userData.profile_pictures[0].image
+                        ? userData.profile_pictures[0].image
                         : avatar
                     }
                     alt=""
@@ -321,7 +322,7 @@ const Profile = () => {
                         <div className="col-md-6">
                           <img
                             className="small-image img-thumbnail"
-                            src={config.media_url + item.image}
+                            src={item.image}
                             alt=""
                             key={item.id}
                           />
