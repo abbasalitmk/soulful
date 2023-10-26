@@ -85,34 +85,34 @@ services:
 
 
  
-  # worker:
-  #   restart: unless-stopped
-  #   build:
-  #     context: ./backend/
-  #     dockerfile: Dockerfile.backend
-  #   container_name: worker
-  #   entrypoint: /app/worker-entrypoint.sh
-  #   environment:
-  #     DEBUG: "True"
-  #     CELERY_BROKER_URL: "redis://redis:6379/0"
-  #   depends_on:
-  #     - backend
-  #     - redis
+  worker:
+    restart: unless-stopped
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile.backend
+    container_name: worker
+    entrypoint: /app/worker-entrypoint.sh
+    environment:
+      DEBUG: "True"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+    depends_on:
+      - backend
+      - redis
 
 
-  # beat:
-  #   restart: unless-stopped
-  #   build:
-  #     context: ./backend/
-  #     dockerfile: Dockerfile.backend
-  #   entrypoint: /app/beat-entrypoint.sh
-  #   container_name: beat
-  #   environment:
-  #     DEBUG: "True"
-  #     CELERY_BROKER_URL: "redis://redis:6379/0"
-  #   depends_on:
-  #     - backend
-  #     - redis
+  beat:
+    restart: unless-stopped
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile.backend
+    entrypoint: /app/beat-entrypoint.sh
+    container_name: beat
+    environment:
+      DEBUG: "True"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+    depends_on:
+      - backend
+      - redis
 
 
   redis:
