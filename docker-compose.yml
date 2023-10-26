@@ -56,16 +56,16 @@ services:
       - backend
 
 
-  # certbot:
-  #   container_name: certbot
-  #   image: certbot/certbot
-  #   volumes:
-  #     - certbot_conf:/etc/letsencrypt
-  #     - certbot_www:/var/www/certbot
-  #   command: certonly --webroot -w /var/www/certbot -d soulful.fun -d www.soulful.fun --non-interactive --agree-tos --email abbasalitmk@gmail.com
+  certbot:
+    container_name: certbot
+    image: certbot/certbot
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot -d soulful.fun -d www.soulful.fun --non-interactive --agree-tos --email abbasalitmk@gmail.com
 
-  #   depends_on:
-  #     - nginx
+    depends_on:
+      - nginx
 
 
 
