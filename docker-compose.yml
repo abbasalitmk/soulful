@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile.backend
     entrypoint: /app/server-entrypoint.sh
     volumes:
-      - static:/static
+      - static:/app/static
       - media:/app/media
     ports:
       - "8000:8000"
