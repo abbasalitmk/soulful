@@ -134,6 +134,7 @@ const ChatRoom = () => {
       const response = await Axios.get("/chat/followers/");
       if (response.status === 200) {
         setFollowers(response.data);
+        console.log(response.data);
       }
     } catch (error) {
       console.log(error.response);
@@ -261,7 +262,7 @@ const ChatRoom = () => {
                           >
                             <div className="d-flex flex-row">
                               <img
-                                src={`${config.media_url}${
+                                src={`${
                                   item.followed_user === user.user_id
                                     ? item.user_image
                                     : item.follower_image

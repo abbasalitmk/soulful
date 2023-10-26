@@ -39,6 +39,8 @@ const Posts = () => {
   const [editPost, setEditPost] = useState(false);
   const [postImage, setPostImage] = useState(null);
   const Axios = AxiosInstance();
+  const user = useSelector((state) => state.auth.user);
+  const currentUserId = user.user_id;
 
   const fetchData = async () => {
     try {
@@ -46,7 +48,6 @@ const Posts = () => {
       const response = await Axios.get(`${config.baseUrl}/posts/`);
       if (response.status === 200) {
         setData(response.data);
-        console.log(response.data);
       } else {
         toast.error("something went wrong!");
       }
@@ -372,42 +373,43 @@ const Posts = () => {
                       </p>
                     </span>
                   </div>
-
-                  <div className="post-options">
-                    <div className="dropdown">
-                      <button
-                        className="btn"
-                        type="button"
-                        id="dropdownMenuButton1"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <BiMenu size={"1.6em"} />
-                      </button>
-                      <ul className="dropdown-menu">
-                        <Link
-                          onClick={() =>
-                            editPostHandler(
-                              item.id,
-                              item.title,
-                              item.image.image
-                            )
-                          }
-                          className="dropdown-item text-decoration-none"
+                  {currentUserId === item.user && (
+                    <div className="post-options">
+                      <div className="dropdown">
+                        <button
+                          className="btn"
+                          type="button"
+                          id="dropdownMenuButton1"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
                         >
-                          <BiEdit size={"1.3em"} className="me-2 " />
-                          Edit
-                        </Link>
-                        <Link
-                          onClick={() => deletePost(item.id)}
-                          className="dropdown-item text-decoration-none"
-                        >
-                          <BiTrash size={"1.3em"} className="me-2" />
-                          Delete
-                        </Link>
-                      </ul>
+                          <BiMenu size={"1.6em"} />
+                        </button>
+                        <ul className="dropdown-menu">
+                          <Link
+                            onClick={() =>
+                              editPostHandler(
+                                item.id,
+                                item.title,
+                                item.image.image
+                              )
+                            }
+                            className="dropdown-item text-decoration-none"
+                          >
+                            <BiEdit size={"1.3em"} className="me-2 " />
+                            Edit
+                          </Link>
+                          <Link
+                            onClick={() => deletePost(item.id)}
+                            className="dropdown-item text-decoration-none"
+                          >
+                            <BiTrash size={"1.3em"} className="me-2" />
+                            Delete
+                          </Link>
+                        </ul>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <p className="post-description">{item.title}</p>

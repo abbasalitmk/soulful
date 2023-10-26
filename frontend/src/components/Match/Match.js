@@ -49,6 +49,7 @@ const Match = () => {
       });
       if (response.status === 200) {
         setUserData(response.data);
+        console.log(response.data);
         toast.success("rendering");
       }
     } catch (error) {
@@ -141,7 +142,7 @@ const Match = () => {
                       <p className="person-name">{item?.name}</p>
                       <p className="person-location">{item?.location}</p>
                       <img
-                        src={item.image ? config.media_url + item?.image : pic}
+                        src={item.image ? item.image : pic}
                         alt=""
                         onClick={() => showProfile(item?.id)}
                       />
