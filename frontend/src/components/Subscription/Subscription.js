@@ -19,7 +19,7 @@ const Subscription = () => {
   useEffect(() => {
     const checkPrime = async () => {
       try {
-        const response = await Axios.get("/subscription/is-prime/");
+        const response = await Axios.get("subscription/is-prime/");
         if (response.status === 200) {
           if (response.data.is_active === true) {
             toast.error("You are already premium member");
