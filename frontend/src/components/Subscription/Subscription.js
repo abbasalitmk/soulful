@@ -36,9 +36,16 @@ const Subscription = () => {
   const handlePayment = async () => {
     try {
       if (!orderId) {
-        const response = await Axios.post("subscription/order/");
-        if (response.status === 201) {
-          orderId = response.data.order_id;
+        console.log("enter");
+        try {
+          const response = await Axios.post("subscription/order/");
+          if (response.status === 201) {
+            orderId = response.data.order_id;
+          }
+        } catch (error) {
+          if (error) {
+            console.log(error.response.data);
+          }
         }
       }
 
