@@ -49,8 +49,6 @@ const Match = () => {
       });
       if (response.status === 200) {
         setUserData(response.data);
-        console.log(response.data);
-        toast.success("rendering");
       }
     } catch (error) {
       console.log(error.response.data);

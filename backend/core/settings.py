@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     "stories",
     "match",
     "subscription",
-    'cloudinary_storage',
-    'cloudinary',
+    "cloudinary_storage",
+    "cloudinary",
 ]
 
 MIDDLEWARE = [
@@ -184,9 +184,9 @@ STATIC_ROOT = os.getenv("STATIC_URL")
 
 # STATIC_ROOT = os.path.join(BASE_DIR, os.getenv("STATIC_URL"))
 
-MEDIA_URL = '/media/'
+MEDIA_URL = "/media/"
 # MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 
 # Default primary key field type
@@ -262,9 +262,7 @@ SOCIAL_AUTH_JSONFIELD_ENABLED = True
 # cloudinary setup
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': "dboiyq886",
-    'API_KEY': os.getenv("CLOUDINARY_API_KEY"),
-    'API_SECRET': os.getenv("CLOUDINARY_API_SECRET")
+    "CLOUD_NAME": "dboiyq886",
+    "API_KEY": os.getenv("CLOUDINARY_API_KEY"),
+    "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
 }
-
-

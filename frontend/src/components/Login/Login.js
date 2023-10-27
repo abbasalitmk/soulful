@@ -79,7 +79,6 @@ const Login = () => {
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (response) => {
-      console.log(response.access_token);
       try {
         const res = await axios.get(
           `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${response.access_token}`,
@@ -109,7 +108,6 @@ const Login = () => {
     formData.append("confirm_password", password);
 
     try {
-      console.log(formData.get("email"));
       const response = await axios.post(
         `${config.baseUrl}/user/google-login/`,
         formData

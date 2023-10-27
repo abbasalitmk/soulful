@@ -31,23 +31,23 @@ const ChatRoom = () => {
   const AZURE_LOCATION = process.env.AZURE_LOCATION;
   const chatContainerRef = useRef(null);
 
-  const checkPrime = async () => {
-    try {
-      const response = await Axios.get("/subscription/is-prime/");
-      if (response.status === 200) {
-        if (response.data.is_active !== true) {
-          toast.error("Please upgrade your account to access chat");
-          navigate("/subscription");
-        }
-      }
-    } catch (error) {
-      console.log(error.response);
-    }
-  };
-  // check is user prime member
-  useEffect(() => {
-    checkPrime();
-  }, []);
+  // const checkPrime = async () => {
+  //   try {
+  //     const response = await Axios.get("/subscription/is-prime/");
+  //     if (response.status === 200) {
+  //       if (response.data.is_active !== true) {
+  //         toast.error("Please upgrade your account to access chat");
+  //         navigate("/subscription");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log(error.response);
+  //   }
+  // };
+  // // check is user prime member
+  // useEffect(() => {
+  //   checkPrime();
+  // }, []);
 
   useEffect(() => {
     // Create a WebSocket connection when the component mounts
@@ -134,7 +134,6 @@ const ChatRoom = () => {
       const response = await Axios.get("/chat/followers/");
       if (response.status === 200) {
         setFollowers(response.data);
-        console.log(response.data);
       }
     } catch (error) {
       console.log(error.response);

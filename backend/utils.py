@@ -21,7 +21,7 @@ def send_verification_mail(user):
     subject = "Verify your email"
     message = f"This is from signal Click the following link to verify your email: {verification_url}"
     from_email = "soulfulapp@gmail.com"
-    recipient_list = ["abbasalitmk@gmail.com"]
+    recipient_list = [email]
     send_mail(subject, message, from_email, recipient_list)
 
 
@@ -29,7 +29,7 @@ def send_otp(otp, email):
     subject = "OTP from soulful.fun"
     message = f"Your one time password is : {otp}"
     from_email = "soulfulapp@gmail.com"
-    recipient_list = ["abbasalitmk@gmail.com"]
+    recipient_list = [email]
     send_mail(subject, message, from_email, recipient_list)
 
 

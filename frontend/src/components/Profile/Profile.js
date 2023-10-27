@@ -96,7 +96,6 @@ const Profile = () => {
       if (response.status === 200) {
         setUserData(response.data);
         setEditedData(response.data.user_profile);
-        console.log(response.data);
       }
     } catch (error) {
     } finally {

@@ -14,7 +14,7 @@ const RefreshTokenProvider = ({ children }) => {
 
   useEffect(() => {
     const currentRefreshToken = currentToken?.refresh;
-    const refreshTokenInterval = 1000 * 60 * 50;
+    const refreshTokenInterval = 1000 * 60 * 500;
 
     if (currentToken) {
       const updateToken = async () => {
