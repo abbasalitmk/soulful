@@ -187,7 +187,6 @@ const Posts = () => {
 
       if (response.status === 200) {
         setComments(response.data);
-        console.log(comments);
       }
     } catch (error) {
       console.log(error.response);
@@ -196,7 +195,6 @@ const Posts = () => {
 
   //add new comment
   const commentPostHandler = async () => {
-    console.log(commentText);
     try {
       const response = await axios.post(
         `${config.baseUrl}/posts/comment/${postId}`,
@@ -210,7 +208,6 @@ const Posts = () => {
         }
       );
       if (response.status === 201) {
-        console.log(response.data);
         setCommentText(null);
         setShowModal(false);
         toast.success("Comment posted successfully");
@@ -230,7 +227,6 @@ const Posts = () => {
   // delete post comment handler
   const deleteCommentHandler = async (commentId) => {
     try {
-      console.log(commentId);
       const response = await Axios.delete(`posts/comment/delete/${commentId}`);
       if (response.status === 200) {
         toast.success("Comment deleted");

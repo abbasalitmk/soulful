@@ -24,7 +24,6 @@ const EditPost = (props) => {
       setPostImage(image);
     }
   };
-  console.log(props.image);
 
   const updatePostHandler = async () => {
     const formData = new FormData();

@@ -21,7 +21,6 @@ const UserManagement = () => {
         setUsersData(response.data);
         setNextPageUrl(response.data.next);
         setPrevPageUrl(response.data.previous);
-        console.log(response.data.next);
       }
     } catch (error) {
       console.log(error.response);

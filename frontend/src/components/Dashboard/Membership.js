@@ -22,7 +22,6 @@ const Membership = () => {
         setSubscribers(response.data);
         setNextPageUrl(response.data.next);
         setPrevPageUrl(response.data.previous);
-        console.log(response.data);
       }
     } catch (error) {
       console.log(error.response);
