@@ -364,12 +364,12 @@ class ResetPasswordView(APIView):
             if otp_instance:
                 otp_instance.otp = "".join(random.choices("0123456789", k=6))
                 otp_instance.save()
-                send_otp_mail(request, email, otp_instance.otp)
+                self.send_otp_mail(request, email, otp_instance.otp)
             else:
                 otp = "".join(random.choices("0123456789", k=6))
                 otp_instance = PasswordReset(email=email, otp=otp)
                 otp_instance.save()
-                send_otp_mail(request, email, otp)
+                self.send_otp_mail(request, email, otp)
 
         except User.DoesNotExist:
             return Response(
