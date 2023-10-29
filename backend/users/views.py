@@ -343,7 +343,7 @@ class FollowUserView(APIView):
 
 
 class ResetPasswordView(APIView):
-    def send_otp_mail(request, email, otp):
+    def send_otp_mail(self, request, email, otp):
         subject = "OTP"
         message = f"Your one time password is : {otp}"
         from_email = "soulfulapp@gmail.com"
