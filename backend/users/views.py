@@ -347,7 +347,7 @@ class ResetPasswordView(APIView):
         subject = "OTP"
         message = f"Your one time password is : {otp}"
         from_email = "soulfulapp@gmail.com"
-        recipient_list = ["abbasalitmk@gmail.com"]
+        recipient_list = [email]
         send_mail(subject, message, from_email, recipient_list)
 
     def post(self, request):
@@ -364,12 +364,12 @@ class ResetPasswordView(APIView):
             if otp_instance:
                 otp_instance.otp = "".join(random.choices("0123456789", k=6))
                 otp_instance.save()
-                print(otp_instance.otp)
+                send_otp_mail(request, email, otp_instance.otp)
             else:
                 otp = "".join(random.choices("0123456789", k=6))
                 otp_instance = PasswordReset(email=email, otp=otp)
                 otp_instance.save()
-                print(otp)
+                send_otp_mail(request, email, otp)
 
         except User.DoesNotExist:
             return Response(
