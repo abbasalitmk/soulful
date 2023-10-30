@@ -356,7 +356,7 @@ const Posts = () => {
                 <div className="post-header d-flex justify-content-between">
                   <div className="post-owner d-flex justify-content-center text-center">
                     <img
-                      src={config.media_url + item.profile_picture}
+                      src={item.profile_picture}
                       alt="avatar"
                       className="post-owner-img"
                     />
