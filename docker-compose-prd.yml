@@ -44,9 +44,8 @@ services:
     ports:  
       - 80:80
       - 443:443
-    restart: unless-stopped
+    restart: no
     volumes:
-      - nginx:/etc/nginx/conf.d
       - certbot_conf:/etc/letsencrypt
       - certbot_www:/var/www/certbot
       - static:/static
@@ -130,6 +129,5 @@ volumes:
   static:
   media:
   postgres_data: 
-  nginx:
   certbot_conf:
   certbot_www:
